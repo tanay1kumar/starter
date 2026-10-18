@@ -185,6 +185,13 @@ transaction. If you just added `DATABASE_URL`, restart the app. `/api/topic` res
 `"source": "postgres"`, and the route falls back to `data/embeddings.json` on its own if the
 database can't be reached.
 
+Tiger Data's connection string ends in `?sslmode=require`. Add `&uselibpqcompat=true` to it:
+node-postgres treats `require` as full certificate verification, and Tiger's certificate chain
+isn't in Node's trust store ("self-signed certificate in certificate chain"). With it, the
+connection is encrypted without checking the certificate, as `psql` does with `sslmode=require`.
+Inserts go in batches of a few MB, since a small Tiger service runs out of memory on one large
+statement.
+
 ### Data files
 
 | File | Written by | Read by |
