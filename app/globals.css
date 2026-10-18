@@ -1,0 +1,91 @@
+/* Tailwind without preflight: the design was built on browser defaults, so we
+   keep them and only add Tailwind's theme + utilities. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme {
+  --color-ink: #2A1715;
+  --color-muted: #6E5A55;
+  --color-body-ink: #4A3632;
+  --color-paper: #FFF6EE;
+  --color-sand: #F3E6DA;
+  --color-accent: #E8382B;
+  --color-accent-dark: #B02B21;
+  --color-shortlist: #FFCB3D;
+  --color-shortlist-shadow: #C98F0E;
+  --font-display: var(--font-fredoka), "Fredoka", "Nunito", sans-serif;
+  --font-body: var(--font-nunito), "Nunito", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
+}
+
+/* ---- From design/talent-dex-v3.html (<helmet><style>), font stacks mapped to next/font ---- */
+body{margin:0;background:#FFF6EE;color:#2A1715;font-family:var(--font-nunito),'Nunito',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2A1715}a:hover{color:#B8261C}
+.display{font-family:var(--font-fredoka),'Fredoka','Nunito',sans-serif;letter-spacing:-0.01em}
+.mono{font-family:var(--font-geist-mono),'Geist Mono',ui-monospace,monospace}
+:focus-visible{outline:3px solid #2A1715;outline-offset:3px}
+.hero:focus{outline:none}
+.lid-dots{background-image:radial-gradient(rgba(255,255,255,.13) 1.4px,transparent 1.7px);background-size:20px 20px}
+.screen-dots{background-image:radial-gradient(rgba(42,23,21,.08) 1px,transparent 1.3px);background-size:12px 12px}
+.press{transition:transform .12s ease,box-shadow .12s ease;cursor:pointer}
+.press:hover{transform:translateY(-2px)}
+.press:disabled{cursor:default;opacity:.45;transform:none}
+.press-y:active{transform:translateY(3px);box-shadow:0 1px 0 #C98F0E!important}
+.press-w:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(42,23,21,.18)!important}
+.press-r:active{transform:translateY(3px)}
+.dex-card{transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s ease}
+.dex-card:hover{transform:translateY(-7px) rotate(-.7deg)}
+.dex-card:hover .sprite{animation:hop .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes hop{0%{transform:translateY(0)}40%{transform:translateY(-12px) scale(1.04)}100%{transform:translateY(0)}}
+.t-ml:hover{box-shadow:0 7px 0 rgba(91,63,214,.35),0 28px 44px -24px rgba(91,63,214,.55)!important}
+.t-frontend:hover{box-shadow:0 7px 0 rgba(180,68,26,.3),0 28px 44px -24px rgba(180,68,26,.5)!important}
+.t-backend:hover{box-shadow:0 7px 0 rgba(26,107,74,.3),0 28px 44px -24px rgba(26,107,74,.5)!important}
+.t-hardware:hover{box-shadow:0 7px 0 rgba(122,93,0,.3),0 28px 44px -24px rgba(122,93,0,.5)!important}
+.t-mobile:hover{box-shadow:0 7px 0 rgba(29,101,184,.3),0 28px 44px -24px rgba(29,101,184,.5)!important}
+.t-design:hover{box-shadow:0 7px 0 rgba(173,42,95,.3),0 28px 44px -24px rgba(173,42,95,.5)!important}
+.card-in{animation:cardIn .6s cubic-bezier(.34,1.56,.64,1) backwards}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}
+.reveal{animation:reveal .45s cubic-bezier(.34,1.56,.64,1) backwards}
+@keyframes reveal{from{opacity:0;transform:translateY(6px) scale(.92)}to{opacity:1;transform:none}}
+.stretch-btn{all:unset;cursor:pointer}
+.stretch-btn::after{content:"";position:absolute;inset:0;z-index:1;border-radius:30px}
+.stretch-btn:focus-visible{outline:3px solid #2A1715;outline-offset:3px;border-radius:6px}
+.star{position:absolute;right:8px;bottom:8px;z-index:2;cursor:pointer}
+.star svg{transition:transform .25s cubic-bezier(.34,1.7,.64,1)}
+.star:hover svg{transform:scale(1.22) rotate(-12deg)}
+.av{transition:filter .6s ease,opacity .6s ease}
+.silhouette{filter:brightness(0);opacity:.5}
+.shimmer{background:linear-gradient(90deg,#F6EBE0 0%,#FFF9F3 50%,#F6EBE0 100%);background-size:200% 100%;animation:sh 1.3s linear infinite}
+@keyframes sh{from{background-position:200% 0}to{background-position:-200% 0}}
+.pulse{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+.stripes{background-image:repeating-linear-gradient(-45deg,rgba(255,255,255,.35) 0 8px,transparent 8px 16px);background-size:22px 22px;animation:stripes .8s linear infinite}
+@keyframes stripes{from{background-position:0 0}to{background-position:22px 0}}
+.sweep{position:absolute;top:0;bottom:0;width:120px;background:linear-gradient(90deg,transparent,rgba(255,203,61,.4),transparent);animation:sweep 1.5s linear infinite;pointer-events:none}
+@keyframes sweep{from{left:-120px}to{left:100%}}
+.burst{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;z-index:3}
+.spark{position:absolute;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#FFCB3D;animation:fly .65s cubic-bezier(.2,.8,.3,1) forwards}
+.spark:nth-child(even){background:#E8382B;width:6px;height:6px;margin:-3px 0 0 -3px}
+@keyframes fly{from{transform:translate(0,0) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+.s1{--dx:0px;--dy:-40px}.s2{--dx:28px;--dy:-28px}.s3{--dx:40px;--dy:0px}.s4{--dx:28px;--dy:28px}.s5{--dx:0px;--dy:40px}.s6{--dx:-28px;--dy:28px}.s7{--dx:-40px;--dy:0px}.s8{--dx:-28px;--dy:-28px}
+.bob{animation:bob 3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.shadow-bob{animation:sbob 3s ease-in-out infinite}
+@keyframes sbob{0%,100%{transform:scaleX(1);opacity:1}50%{transform:scaleX(.82);opacity:.7}}
+.radar-in{transform-box:view-box;transform-origin:170px 150px;animation:radar .9s cubic-bezier(.34,1.56,.64,1) backwards}
+@keyframes radar{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.proj{transition:transform .26s cubic-bezier(.34,1.56,.64,1)}
+.proj:hover{transform:translateY(-5px) rotate(-.6deg)}
+.pill-link{transition:transform .12s ease}
+.pill-link:hover{transform:translateY(-2px);color:#2A1715!important}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+/* ---- end of design styles ---- */
+
+/* SVG <text> in the design names families directly ("Geist Mono, monospace");
+   next/font renames families, so SVG text uses these classes instead. */
+.svg-mono{font-family:var(--font-geist-mono),'Geist Mono',ui-monospace,monospace}
+.svg-body{font-family:var(--font-nunito),'Nunito',system-ui,sans-serif}
+
+/* Visually hidden, still read by screen readers. */
+.sr-only-td{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}

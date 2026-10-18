@@ -1,0 +1,32 @@
+# secrets — never commit
+keys.env
+.env*
+!keys.env.example
+
+# node / next
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# python pipeline
+pipeline/.venv/
+pipeline/cache/
+pipeline/work/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# misc
+.DS_Store
+*.log
+/coverage
+.vercel
+*.pem
