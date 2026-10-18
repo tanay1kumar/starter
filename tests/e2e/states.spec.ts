@@ -32,7 +32,7 @@ test("builders that fail to load say why, and Try again recovers", async ({ page
   await page.route("**/api/builders", (route) => (fail ? route.abort("internetdisconnected") : route.continue()));
   await page.goto("/matches");
   await expect(page.getByRole("heading", { name: "Something went wrong" })).toBeVisible();
-  await expect(page.getByText("Couldn't reach Talent Dex. Check your connection and try again.")).toBeVisible();
+  await expect(page.getByText("Couldn't reach Starter. Check your connection and try again.")).toBeVisible();
 
   // It fails again: focus comes back to the button that went away while loading.
   await page.getByRole("button", { name: "Try again" }).click();
@@ -349,7 +349,7 @@ test("screen 0 explains a failed search and stays ready to try again", async ({ 
   await expect(page.locator("#hiring-error")).toHaveText("Couldn't read your search. Try again.");
   parse = "down";
   await page.getByRole("button", { name: /Start scan/ }).click();
-  await expect(page.locator("#hiring-error")).toHaveText("Couldn't reach Talent Dex. Check your connection and try again.");
+  await expect(page.locator("#hiring-error")).toHaveText("Couldn't reach Starter. Check your connection and try again.");
   await expect(page.getByRole("textbox")).toHaveValue("ML intern in Toronto");
 });
 

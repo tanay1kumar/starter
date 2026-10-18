@@ -23,7 +23,7 @@ const PROMPT = "Describe who you're hiring, or paste a job posting.";
 const MAX_CHARS = 8000;
 const TOO_LONG = "That's over 8,000 characters. Paste just the role description.";
 const PARSE_FAILED = "Couldn't read your search. Try again.";
-const OFFLINE = "Couldn't reach Talent Dex. Check your connection and try again.";
+const OFFLINE = "Couldn't reach Starter. Check your connection and try again.";
 
 /** A parse slower than this shows "Reading your search…"; a cached one never flashes it. */
 const SLOW_MS = 400;
@@ -183,7 +183,7 @@ export default function SearchScreen() {
               </g>
             </svg>
             <span className="display" style={{ fontSize: 25, fontWeight: 700 }}>
-              Talent Dex
+              Starter
             </span>
           </Link>
         </header>
@@ -194,7 +194,7 @@ export default function SearchScreen() {
               Who are you hiring?
             </h1>
             <p style={{ margin: "12px auto 0", maxWidth: 660, fontSize: 17, fontWeight: 700, lineHeight: 1.45, color: "rgba(255,255,255,.9)", textAlign: "center" }}>
-              Describe the role in your own words. Talent Dex reads Devpost projects and the GitHub code behind them, then ranks the builders who fit.
+              Describe the role in your own words. Starter reads Devpost projects and the GitHub code behind them, then ranks the builders who fit.
             </p>
 
             <form
@@ -327,7 +327,7 @@ export default function SearchScreen() {
         </div>
       </div>
 
-      <section aria-label="How Talent Dex works" style={{ maxWidth: 1240, margin: "0 auto", padding: "28px 24px 80px", boxSizing: "border-box" }}>
+      <section aria-label="How Starter works" style={{ maxWidth: 1240, margin: "0 auto", padding: "28px 24px 80px", boxSizing: "border-box" }}>
         <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))", gap: 22 }}>
           {STEPS.map((s, i) => (
             <li

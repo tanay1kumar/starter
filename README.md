@@ -1,6 +1,6 @@
-# Talent Dex
+# Starter
 
-Talent Dex helps recruiters find student builders through their hackathon work. It reads projects
+Starter helps recruiters find student builders through their hackathon work. It reads projects
 from Ontario hackathons on Devpost, works out from each repo's git history which teammate wrote
 which code, and ranks those builders against a recruiter's search ("ML intern, Toronto"). Every
 number on a builder's Dex entry links back to where it came from (a GitHub repo, a Devpost page or
@@ -228,7 +228,7 @@ statement.
    leftovers, with names, usernames, emails and URLs removed.
 4. **Enrichment.** School, program, graduation and city from People Data Labs (by the LinkedIn URL on
    their own Devpost profile), else from the Devpost tagline. Repo count and last push from GitHub.
-5. **Scores.** EVs, IVs, the card numbers (Hackathons, Wins, Repos) and a stable 4-digit dex number
+5. **Scores.** Effort, traits, the card numbers (Hackathons, Wins, Repos) and a stable 4-digit dex number
    from a hash of the Devpost username.
 6. **Words.** Gemini writes each card's "why" line (at most 15 words) and the Dex summary (at most
    20) from verified facts only; names, schools and photos are never sent. Every number in a line
@@ -258,17 +258,17 @@ skill_fit = mean over the searched types of min(1, EV_type / 252)
 Ties go to more wins, then more hackathons. A row we can't check (no year or city found) is "Not
 listed": it scores 0 and names where we looked.
 
-### EVs and IVs
+### Effort and traits (EVs and IVs in BUILD.md)
 
-- **EVs (effort, 0–252 per type, 510 in total).** `EV_t = min(252, round(510 × maturity × share_t))`,
+- **Effort (EVs; 0–252 per type, 510 in total).** `EV_t = min(252, round(510 × maturity × share_t))`,
   where `share_t` is the builder's counted lines of type t over all their counted lines and
-  `maturity = min(1, projects with counted code ÷ 6)`. "Fully trained" means 510. Each EV row names
+  `maturity = min(1, projects with counted code ÷ 6)`. "Fully trained" means 510. Each effort row names
   the projects its points came from.
-- **IVs (traits, 0–31).** Six raw values per builder: Ships demos (projects with a demo video or a
+- **Traits (IVs; 0–31).** Six raw values per builder: Ships demos (projects with a demo video or a
   working live link), Wins (prizes), Ownership (projects where they wrote the most code), Teamwork
   (distinct teammates), Persistence (projects with code pushed after the event) and Documentation
   (projects with a README they wrote), most of them per hackathon. Each becomes
-  `round(31 × share of the other builders in the scan with a lower value)`, so IVs are relative to
+  `round(31 × share of the other builders in the scan with a lower value)`, so traits are relative to
   everyone in the scan. The strongest trait names the builder's nature.
 
 ### Topic search
@@ -316,7 +316,7 @@ point at rather than who.
 hackathons". Click the "ML intern, Toronto" chip, then "Start scan".
 
 > "Hackathon sponsors see hundreds of student projects and can't tell who on a team built what.
-> Talent Dex reads Ontario hackathon projects on Devpost and the GitHub code behind them: here, 215
+> Starter reads Ontario hackathon projects on Devpost and the GitHub code behind them: here, 215
 > projects from five hackathons. I describe who I'm hiring in my own words, or paste a job posting."
 
 ### 0:30–1:00 · The scan replay
@@ -342,24 +342,24 @@ header goes to 1. (That header pill is also a toggle that shows only the shortli
 > ranking updates right away: it's plain arithmetic, never a model. Tabs split builders by type, and
 > I can sort by wins or hackathons. I'll shortlist this one. Seen counts the entries I've opened."
 
-### 1:30–2:00 · A Dex entry: why they fit, and EVs
+### 1:30–2:00 · A Dex entry: why they fit, and effort
 
 **Do:** Click the top card; it grows into the Dex entry. Point at the match score, "k of 4 match",
 and the small source under each row of "Why <first name> fits your search". On the trait board
-("EVs · Effort"), point at a row's "From <project>" line and the "N / 510 EVs" total.
+("Effort"), point at a row's "From <project>" line and the "N / 510 effort points" total.
 
 > "This is a Dex entry. Each row of 'why they fit' names its source: GitHub for code, Devpost for
-> prizes and profiles, People Data Labs for education when we have it. EVs are effort points from
+> prizes and profiles, People Data Labs for education when we have it. Effort points come from
 > the code they actually wrote, split by area, and each row names the projects behind it."
 
-### 2:00–2:30 · IVs, field notes, signature projects
+### 2:00–2:30 · Traits, field notes, signature projects
 
-**Do:** Click "IVs · Traits" and point at "How <first name> ranks against the N builders in this
+**Do:** Click "Traits" and point at "How <first name> ranks against the N builders in this
 scan" and one tile's evidence line. In Field notes, point at a "Not listed" value and the "Looked in
 …" line under it (press → to step to the next builder if this one has every field). In Signature
 projects, point at "<first name> wrote N%" and the prize.
 
-> "IVs compare them with everyone in this scan, from 0 to 31, and each tile says why. When we can't
+> "Traits compare them with everyone in this scan, from 0 to 31, and each tile says why. When we can't
 > find something, the entry says 'Not listed' and where we looked; we never fill a gap with a guess.
 > And each project shows how much of its counted code this person wrote."
 
@@ -391,7 +391,7 @@ linked from <first name>'s own Devpost profile, so this is the right person.").
 
 > "Last, trust. We never match people across sites by name. We only follow the GitHub and LinkedIn
 > links people posted on their own Devpost profile, and commit authors we can't place stay unknown.
-> Every number on this page links back to where it came from. That's Talent Dex."
+> Every number on this page links back to where it came from. That's Starter."
 
 ## Troubleshooting
 
@@ -419,9 +419,9 @@ shows "Something went wrong" with "No data/builders.json yet. Run the pipeline o
 DATA_SOURCE=sample.", and screen 0 leaves out the "Scanning …" line. Run the pipeline, restore the
 committed copy with `git restore data/builders.json`, or use `npm run dev` for the sample.
 
-If the file is there but isn't valid JSON or a Talent Dex dataset, screen 1 shows "Couldn't read the
+If the file is there but isn't valid JSON or a Starter dataset, screen 1 shows "Couldn't read the
 builders data." and the server log (the terminal running `next dev`) says why, for example
-"/api/builders: data/builders.json is not a Talent Dex dataset (version 1)". `/api/scan` logs the
+"/api/builders: data/builders.json is not a Starter dataset (version 1)". `/api/scan` logs the
 same reason.
 
 ### Topic search answers 409 with sample data

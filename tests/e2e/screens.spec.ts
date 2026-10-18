@@ -35,14 +35,14 @@ test("screen 1: matches grid, scanning then done", async ({ page }) => {
   await shot(page, "screen-1-grid", true);
 });
 
-test("screen 2: Dex entry, EVs, IVs and the draft", async ({ page }) => {
+test("screen 2: Dex entry, effort, traits and the draft", async ({ page }) => {
   await page.goto("/matches");
   await expect(page.getByRole("heading", { name: /builders? found!/ })).toBeVisible({ timeout: 20_000 });
   await page.locator("article h2 button").first().click();
   await expect(page.getByRole("heading", { name: /fits your search/ })).toBeVisible();
   await shot(page, "screen-2-profile", true);
 
-  await page.getByRole("button", { name: "IVs · Traits" }).click();
+  await page.getByRole("button", { name: "Traits", exact: true }).click();
   await expect(page.getByText(/nature$/).first()).toBeVisible();
   await shot(page, "screen-2-profile-iv", true);
 

@@ -1,4 +1,4 @@
-# Talent Dex — build notes
+# Starter — build notes
 
 Decisions, things skipped, and known data gaps, written as the build goes.
 
@@ -370,7 +370,7 @@ marked "(review)" below; they are fixed. Nothing here changes the data.
   - The request gives up after 15 s and falls back to "couldn't check". A topic that wasn't
     embedded ahead of time loads the local model first, so the limit is generous.
 - **Errors.**
-  - If the builders request fails at the network level, the page says "Couldn't reach Talent Dex.
+  - If the builders request fails at the network level, the page says "Couldn't reach Starter.
     Check your connection and try again." A 200 without builders is an error (it used to load
     forever).
   - A server error without a message says "Couldn't load builders. Try again." (review: it showed
@@ -379,7 +379,7 @@ marked "(review)" below; they are fixed. Nothing here changes the data.
     Next's issue badge on the error frame, which opened the code again (review).
   - When `data/builders.json` is there but can't be read, the page says "Couldn't read the builders
     data." `/api/builders` and `/api/scan` now log the reason on the server ("data/builders.json is
-    not valid JSON", "… is not a Talent Dex dataset (version 1)"), never the data; `loadDataset`
+    not valid JSON", "… is not a Starter dataset (version 1)"), never the data; `loadDataset`
     names the file instead of passing on JSON.parse's message, which quotes the file.
 - **Copy email** says "Couldn't copy" when the browser refuses, instead of always "Copied!", with a
   textarea fallback for plain-http pages. The result is read out.
@@ -434,3 +434,7 @@ marked "(review)" below; they are fixed. Nothing here changes the data.
     `docs/screenshots/demo/`.
   - Screenshots use `animations: "disabled"` so they are stable; screen 0 waits for its scan line.
 - Data numbers after the full run are in Milestone 3.
+- **Renamed after the build.** At the user's request the product is now called Starter (BUILD.md
+  calls it Talent Dex), and the trait board's two views are "Effort" and "Traits" instead of
+  "EVs · Effort" and "IVs · Traits"; the total reads "N / 510 effort points". The data fields
+  (`ev`, `iv`), the Python package (`talentdex`) and the Postgres schema keep their names.

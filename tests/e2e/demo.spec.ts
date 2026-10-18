@@ -148,7 +148,7 @@ test("the 4-minute demo, start to finish", async ({ page, request, baseURL }) =>
     return top;
   });
 
-  await test.step("1:30 A Dex entry: why they fit, and EVs", async () => {
+  await test.step("1:30 A Dex entry: why they fit, and effort", async () => {
     const score = (await cards.first().getByRole("img", { name: /^Match score \d+ percent$/ }).getAttribute("aria-label"))!;
     await cardName(cards.first()).getByRole("button").click();
     // The card grows into the Dex entry, and focus moves to the builder's name.
@@ -173,20 +173,20 @@ test("the 4-minute demo, start to finish", async ({ page, request, baseURL }) =>
     await expect(why.getByText(`${met} of 4 match`, { exact: true })).toBeVisible();
     await shot(page, "09-dex-entry");
 
-    // EVs: effort points by area, each row naming the projects behind it.
+    // Effort: points by area, each row naming the projects behind it.
     const board = section(page, "Trait board");
-    await expect(board.getByRole("button", { name: "EVs · Effort" })).toHaveAttribute("aria-pressed", "true");
-    await expect(board.getByRole("img", { name: new RegExp(`^EV hexagon for ${escapeRegExp(top)}: `) })).toBeVisible();
+    await expect(board.getByRole("button", { name: "Effort", exact: true })).toHaveAttribute("aria-pressed", "true");
+    await expect(board.getByRole("img", { name: new RegExp(`^Effort hexagon for ${escapeRegExp(top)}: `) })).toBeVisible();
     await expect(board.getByText(/^From .+/).first()).toBeVisible();
-    await expect(board.getByText(/^\d+ \/ 510 EVs$/)).toBeVisible();
+    await expect(board.getByText(/^\d+ \/ 510 effort points$/)).toBeVisible();
     await board.scrollIntoViewIfNeeded();
     await shot(page, "10-evs");
   });
 
-  const next = await test.step("2:00 IVs, field notes, signature projects", async () => {
+  const next = await test.step("2:00 Traits, field notes, signature projects", async () => {
     const first = firstName(top);
     const board = section(page, "Trait board");
-    const ivs = board.getByRole("button", { name: "IVs · Traits" });
+    const ivs = board.getByRole("button", { name: "Traits", exact: true });
     await ivs.click();
     await expect(ivs).toHaveAttribute("aria-pressed", "true");
     await expect(board.getByText(/ nature$/)).toBeVisible();

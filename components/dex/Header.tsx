@@ -11,7 +11,7 @@ import { plural } from "@/lib/format";
 import type { HeaderProps } from "./contracts";
 import { Icon } from "./primitives";
 
-/** Logo + "Talent Dex", linking home. Shared with DexStatus (loading / error frame). */
+/** Logo + "Starter", linking home. Shared with DexStatus (loading / error frame). */
 export function BrandLink({ accent, accentDark }: { accent: string; accentDark: string }) {
   return (
     <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none", color: "#FFFFFF" }}>
@@ -31,7 +31,7 @@ export function BrandLink({ accent, accentDark }: { accent: string; accentDark: 
         </g>
       </svg>
       <span className="display" style={{ fontSize: 25, fontWeight: 700 }}>
-        Talent Dex
+        Starter
       </span>
     </Link>
   );
