@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SearchScreen from "@/components/search/SearchScreen";
 
 export const metadata: Metadata = {
-  title: "Talent Dex",
+  title: "Starter",
 };
 
 // Screen 0: describe who you're hiring, then "Start scan" goes to /matches.

@@ -1,5 +1,5 @@
-// Dex entry: the trait board with its two views, "EVs · Effort" (hexagon radar +
-// rows) and "IVs · Traits" (nature + six tiles).
+// Dex entry: the trait board with its two views, "Effort" (hexagon radar + rows)
+// and "Traits" (nature + six tiles).
 // Ported from design/extracted/markup.html (lines 401-492).
 
 import { Fragment, type CSSProperties, type Ref } from "react";
@@ -45,10 +45,10 @@ export function TraitBoard({ p, accent, accentDark, tab, onTab, radarRef }: Trai
         </h2>
         <div role="group" aria-label="Trait view" style={{ display: "inline-flex", gap: 4, padding: 5, borderRadius: 999, background: "#FFF6EE" }}>
           <button type="button" className="press" aria-pressed={evOn} onClick={() => onTab("ev")} style={{ ...tabBase, ...(evOn ? tabOn : tabOff) }}>
-            EVs · Effort
+            Effort
           </button>
           <button type="button" className="press" aria-pressed={ivOn} onClick={() => onTab("iv")} style={{ ...tabBase, ...(ivOn ? tabOn : tabOff) }}>
-            IVs · Traits
+            Traits
           </button>
         </div>
       </div>
@@ -73,7 +73,7 @@ function EvView({ p, accent, radarRef }: { p: ProfileVM; accent: string; radarRe
   return (
     <>
       <p style={{ margin: "10px 0 0", fontSize: 15, fontWeight: 600, lineHeight: 1.5, color: "#6E5A55" }}>
-        Effort points {p.first} earned from each project, capped at 510 like in the games. The shape shows where the time went.
+        Effort points {p.first} earned from each project, capped at 510. The shape shows where the time went.
       </p>
       <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "18px 28px" }}>
         <div style={{ flex: "0 1 340px", minWidth: 250 }}>
@@ -155,7 +155,7 @@ function EvView({ p, accent, radarRef }: { p: ProfileVM; accent: string; radarRe
       </div>
       <div style={{ marginTop: 18, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
         <span className="mono" style={{ fontSize: 13.5, fontWeight: 600, color: "#4A3632" }}>
-          {p.evTotal} / 510 EVs
+          {p.evTotal} / 510 effort points
         </span>
         <span style={{ padding: "4px 12px", borderRadius: 999, fontSize: 13, fontWeight: 800, ...p.trainedStyle }}>{p.trainedLabel}</span>
       </div>

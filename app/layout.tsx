@@ -8,7 +8,7 @@ const nunito = Nunito({ variable: "--font-nunito", subsets: ["latin"], display: 
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Talent Dex",
+  title: "Starter",
   description: "Find student builders from their hackathon projects and the code they actually wrote.",
 };
 

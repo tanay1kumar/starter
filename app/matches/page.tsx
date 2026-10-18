@@ -4,7 +4,7 @@ import DexApp from "@/components/dex/DexApp";
 import { DexStatus } from "@/components/dex/DexStatus";
 
 export const metadata: Metadata = {
-  title: "Matches · Talent Dex",
+  title: "Matches · Starter",
 };
 
 export default function MatchesPage() {

@@ -133,7 +133,7 @@ test.describe("the Say hi draft", () => {
 test("every control on the three screens shows the focus ring", async ({ page }) => {
   await page.goto("/");
   const search = await tabStops(page);
-  expect(search.map((s) => s.name)).toEqual(expect.arrayContaining(["Talent Dex", "ML intern, Toronto", "Start scan"]));
+  expect(search.map((s) => s.name)).toEqual(expect.arrayContaining(["Starter", "ML intern, Toronto", "Start scan"]));
 
   await scanDone(page);
   await page.mouse.move(0, 0);
@@ -147,9 +147,9 @@ test("every control on the three screens shows the focus ring", async ({ page })
   await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
   await page.getByRole("button", { name: "Say hi" }).click();
   // Opening the draft put focus inside it; walk the whole entry from the top instead.
-  await page.getByRole("link", { name: "Talent Dex" }).focus();
+  await page.getByRole("link", { name: "Starter" }).focus();
   const entry = await tabStops(page);
-  for (const want of [/^All \d+ builders$/, /^Shortlist/, /^Hide draft$/, /^Copy email$/, /^EVs · Effort$/, /^IVs · Traits$/]) {
+  for (const want of [/^All \d+ builders$/, /^Shortlist/, /^Hide draft$/, /^Copy email$/, /^Effort$/, /^Traits$/]) {
     expect(entry.map((s) => s.name).some((n) => want.test(n)), String(want)).toBe(true);
   }
 

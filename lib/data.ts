@@ -22,7 +22,7 @@ export async function loadDataset(source: DataSource = dataSource()): Promise<Da
     throw new Error(`data/${file} is not valid JSON`);
   }
   if (data.version !== 1 || !Array.isArray(data.builders)) {
-    throw new Error(`data/${file} is not a Talent Dex dataset (version 1)`);
+    throw new Error(`data/${file} is not a Starter dataset (version 1)`);
   }
   return data;
 }

@@ -35,7 +35,7 @@ import { Header } from "./Header";
 import { ProfileHero } from "./ProfileHero";
 import { ProfileMain } from "./ProfileMain";
 
-const OFFLINE = "Couldn't reach Talent Dex. Check your connection and try again.";
+const OFFLINE = "Couldn't reach Starter. Check your connection and try again.";
 const LOAD_FAILED = "Couldn't load builders. Try again.";
 /** The topic check gives up after this and the topic row says it couldn't check. A topic that
  *  wasn't embedded ahead of time loads the local model first, which takes a few seconds. */
