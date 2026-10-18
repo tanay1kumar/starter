@@ -21,20 +21,22 @@ def team_for(project: dict) -> list[Member]:
     for m in project["members"]:
         prof = devpost.fetch_profile(m["username"])
         gh = prof["github"] if prof else None
-        email = None
-        if gh:
-            u = github.user(gh)
-            email = (u or {}).get("email")
-        team.append(Member(username=m["username"], name=(prof or {}).get("name") or m["name"], github=gh, email=email))
+        u = github.user(gh) if gh else None
+        team.append(Member(username=m["username"], name=(prof or {}).get("name") or m["name"], github=gh,
+                           email=(u or {}).get("email"), gh_name=(u or {}).get("name")))
     return team
 
 
 def window_for(project: dict, hackathon_name: str | None = None) -> dict:
-    """Submission window of the project's hackathon (the named one, else the first)."""
+    """Submission window of the project's hackathon (the named one, else the first).
+    Raises ValueError when the project was not submitted to the named hackathon."""
     subs = project["submissions"]
     if hackathon_name:
         want = devpost.norm_title(hackathon_name)
-        subs = [s for s in subs if devpost.norm_title(s["hackathon"]) == want] or subs
+        subs = [s for s in subs if devpost.norm_title(s["hackathon"]) == want]
+        if not subs:
+            sent = ", ".join(s["hackathon"] for s in project["submissions"]) or "none"
+            raise ValueError(f"{project['slug']} has no submission to {hackathon_name!r} (submitted to: {sent})")
     for s in subs:
         try:
             return {**devpost.hackathon_window({"url": s["url"], "title": s["hackathon"]}), "hackathon": s["hackathon"], "url": s["url"]}
@@ -47,7 +49,10 @@ def window_for(project: dict, hackathon_name: str | None = None) -> dict:
 
 def analyze_repo(slug: str, win: dict, team: list[Member]) -> dict:
     ex = extract(slug)
-    logins = github.commit_logins(slug, ex["branch"])
+    try:
+        logins = github.commit_logins(slug, ex["branch"], ex["commits"])
+    except RuntimeError as e:  # rate limit or outage
+        raise RepoSkip(f"GitHub login lookup failed: {e}", retryable=True) from None
     start, end = devpost.window_bounds(win)
     return attribute(ex, start, end, team, logins)
 
@@ -63,7 +68,7 @@ def analyze_project(slug_or_url: str, hackathon_name: str | None = None) -> dict
         try:
             repos[slug] = analyze_repo(slug, win, team)
         except RepoSkip as e:
-            repos[slug] = {"skip": str(e)}
+            repos[slug] = {"skip": str(e), "retryable": e.retryable}
     return {"project": project, "window": win, "team": [m.__dict__ for m in team], "repos": repos}
 
 
@@ -95,7 +100,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  unknown {k:<30} {d['share']:>3}%  ({d['lines']} lines; names {d['names']})")
         print(f"  identities: " + "; ".join(f"{k} -> {v['member'] or 'unknown'} ({v['method']})" for k, v in r["identities"].items()))
         print(f"  flags: {r['flags'] or 'none'}  kept building: {r['kept'] or 'nobody'}  readme: {r['readme']}")
-        print(f"  excluded lines: {r['excluded']}  template: {r['template']}  capped: {r['capped_lines']}")
+        print(f"  excluded lines: {r['excluded']}  template: {r['template']}  replayed: {r['replayed_lines']}  capped: {r['capped_lines']}")
         if args.file:
             paths = [f for f in r["files"] if f.endswith(args.file)]
             for f in paths:

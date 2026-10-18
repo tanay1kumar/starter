@@ -200,6 +200,48 @@ def fetch_project(url_or_slug: str) -> dict | None:
     return parse_project(r.text, url)
 
 
+# ----------------------------------------------------------------- galleries
+
+def parse_gallery(html: str) -> dict:
+    """One page of a hackathon's project gallery (<hackathon>/project-gallery?page=N).
+
+    Returns {"items": [{slug, url, name, winner, software_id}], "total": int | None,
+    "message": str}. Items are in page order; `winner` is Devpost's winner ribbon;
+    `url` is always https://devpost.com/software/<slug> (the same key fetch_project
+    caches under). `total` comes from the "1 – 24 of 124" line; `message` is the
+    note Devpost shows instead of items (e.g. "The hackathon managers haven't
+    published this gallery yet, but hang tight!").
+    """
+    s = soup(html)
+    items: list[dict] = []
+    for item in s.select(".gallery-item"):
+        a = item.select_one("a.link-to-software[href]") or item.select_one("a[href*='/software/']")
+        if not a or "/software/built-with/" in a["href"]:
+            continue
+        slug = project_slug(a["href"])
+        if not slug or any(i["slug"] == slug for i in items):
+            continue
+        items.append({
+            "slug": slug,
+            "url": f"https://devpost.com/software/{slug}",
+            "name": text(item.select_one("h5")),
+            "winner": item.select_one("img.winner") is not None,
+            "software_id": item.get("data-software-id"),
+        })
+    notes = []
+    g = s.select_one("#submission-gallery")
+    if g:
+        notes = [text(p) for p in g.find_all("p") if p.find_parent("form") is None and p.find_parent(class_="gallery-item") is None]
+        notes = [n for n in notes if n]
+    total = None
+    for n in notes:
+        m = re.search(r"\bof\s+([\d,]+)\s*$", n)
+        if m:
+            total = int(m.group(1).replace(",", ""))
+    message = "" if items else (notes[0] if notes else "")
+    return {"items": items, "total": total, "message": message}
+
+
 # ------------------------------------------------------------------ profiles
 
 def _github_user(url: str) -> str | None:
@@ -314,6 +356,6 @@ def window_bounds(win: dict) -> tuple[datetime, datetime]:
 
 __all__ = [
     "DEVPOST", "find_hackathon", "search_hackathons", "hackathon_window", "fetch_project", "parse_project",
-    "fetch_profile", "parse_profile", "fetch_challenges", "repo_slug", "project_slug", "norm_title",
-    "window_bounds", "parse_iso",
+    "parse_gallery", "fetch_profile", "parse_profile", "fetch_challenges", "repo_slug", "project_slug",
+    "norm_title", "window_bounds", "parse_iso",
 ]
