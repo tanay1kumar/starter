@@ -1,0 +1,98 @@
+{
+ "version": 1,
+ "entries": {
+  "358341ec866d35821b6d6f6e236616a1ee470fc0": {
+   "text": "Someone who has built a RAG pipeline, in Toronto",
+   "criteria": {
+    "types": [
+     "ml",
+     "backend"
+    ],
+    "year": null,
+    "location": "Toronto",
+    "winner": false,
+    "topic": "RAG pipeline",
+    "topicQuery": "A retrieval-augmented generation pipeline that answers questions from documents retrieved from a vector database."
+   },
+   "model": "gemini-3.8-flash",
+   "at": "2026-10-18T06:14:35.469Z"
+  },
+  "481a6ad5930cc76769ff33f229dceeee91916c56": {
+   "text": "ML intern for our applied AI team. Ideally a 3rd-year student in Toronto who has won a hackathon.",
+   "criteria": {
+    "types": [
+     "ml"
+    ],
+    "year": 3,
+    "location": "Toronto",
+    "winner": true,
+    "topic": null,
+    "topicQuery": null
+   },
+   "model": "gemini-3.8-flash",
+   "at": "2026-10-18T06:14:23.528Z"
+  },
+  "493cad6475d180000211b959cf4f88475c99a5d7": {
+   "text": "Hardware co-op working on embedded C and sensors. Arduino or ESP32 experience. Any year, near Hamilton.",
+   "criteria": {
+    "types": [
+     "hardware"
+    ],
+    "year": null,
+    "location": "Hamilton",
+    "winner": false,
+    "topic": null,
+    "topicQuery": null
+   },
+   "model": "gemini-3.8-flash",
+   "at": "2026-10-18T06:14:26.262Z"
+  },
+  "4dd31497077d310c4a3807cc43dc1fdc3999bc9e": {
+   "text": "Built a RAG pipeline",
+   "criteria": {
+    "types": [
+     "ml",
+     "backend"
+    ],
+    "year": null,
+    "location": null,
+    "winner": false,
+    "topic": "RAG pipeline",
+    "topicQuery": "A retrieval-augmented generation pipeline that answers questions from documents retrieved from a vector database."
+   },
+   "model": "gemini-3.8-flash",
+   "at": "2026-10-18T06:14:31.798Z"
+  },
+  "babf957bddf275091d33b1e702f58158bfea3ddf": {
+   "text": "Software Engineering Intern, Machine Learning (Summer 2027)\nLocation: Toronto, ON (hybrid)\n\nAbout the team\nWe build computer vision models that help grocery stores keep shelves stocked.\n\nWhat you'll do\n- Train and evaluate PyTorch models on real store images\n- Build data pipelines and small FastAPI services around them\n- Demo what you built to customers every two weeks\n\nWhat we're looking for\n- In 3rd or 4th year of Computer Science, Engineering or a related program\n- Python, plus experience with PyTorch or TensorFlow\n- Projects you shipped outside class; hackathon winners are a plus",
+   "criteria": {
+    "types": [
+     "ml",
+     "backend"
+    ],
+    "year": 3,
+    "location": "Toronto",
+    "winner": true,
+    "topic": null,
+    "topicQuery": null
+   },
+   "model": "gemini-3.8-flash",
+   "at": "2026-10-18T06:14:39.316Z"
+  },
+  "beca8f6af24fd45348f862d5ede9d5502ed6bfad": {
+   "text": "Backend new grad who has built real APIs and databases at hackathons, based in Waterloo.",
+   "criteria": {
+    "types": [
+     "backend"
+    ],
+    "year": 0,
+    "location": "Waterloo",
+    "winner": false,
+    "topic": null,
+    "topicQuery": null
+   },
+   "model": "gemini-3.8-flash",
+   "at": "2026-10-18T06:14:29.506Z"
+  }
+ }
+}

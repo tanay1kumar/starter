@@ -1,7 +1,8 @@
 import { parseSearch } from "@/lib/parse";
 
-// Screen 0: turns the recruiter's text into search criteria ({ criteria, source }).
-// Rules only for now; milestone 4 puts a cached Gemini parse behind lib/parse.
+// Screen 0: turns the recruiter's text into search criteria ({ criteria, source, cached }).
+// Cached Gemini answers first (data/searches.json); live Gemini only with
+// ALLOW_LIVE_GEMINI=1; otherwise the keyword rules. See lib/parse.ts.
 
 const MAX_CHARS = 8000;
 

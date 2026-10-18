@@ -1,6 +1,7 @@
 // Screen 0, rules parser: turns a recruiter's text into search criteria with
 // keyword rules. Deterministic and offline (no network, no model). lib/parse.ts
-// wraps it; from milestone 4 it is also the fallback when Gemini is unavailable.
+// uses it when there is no cached Gemini answer and live Gemini is off or fails.
+// It never sets a topic: project-experience searches need the Gemini parse.
 
 import places from "@/data/places.json";
 import type { Criteria, TypeKey } from "./types";
@@ -218,6 +219,7 @@ export function parseRules(text: string): Criteria {
     location: findLocation(t),
     winner: WINNER_RE.test(t),
     topic: null,
+    topicQuery: null,
     text: t,
   };
 }

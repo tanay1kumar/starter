@@ -284,6 +284,26 @@ function appearAt(i: number): number {
   return i < ANIMATED_CARDS ? 7 * (i + 1) : SCAN_TICKS - 6;
 }
 
+/** The replay counter (design): scanned = round(tick * 3 * total / 214). */
+function scannedAt(tick: number, total: number): number {
+  return Math.min(total, Math.round((tick * 3 * total) / 214));
+}
+
+/**
+ * Builder id -> the tick at which the replay's counter passes the project where
+ * the cached run found them (scan.order: crawl order, first find wins). Empty
+ * for the sample, which has no crawl order.
+ */
+function foundTicks(data: Dataset): Record<string, number> {
+  const total = Math.max(1, data.scan.projectsChecked);
+  const out: Record<string, number> = {};
+  (data.scan.order || []).forEach((o, i) => {
+    const t = Math.min(SCAN_TICKS, Math.ceil(((i + 0.5) * 214) / (3 * total)));
+    for (const id of o.builders) if (!(id in out)) out[id] = t;
+  });
+  return out;
+}
+
 export interface Derived {
   ranked: Ranked[];
   grid: GridVM;
@@ -300,8 +320,11 @@ export function deriveGrid(s: DexState, ctx: Ctx): Derived {
 
   const pos: Record<string, number> = {};
   ranked.forEach((r, i) => (pos[r.b.id] = i));
+  const found = foundTicks(data);
+  // Silhouettes appear in rank order (design timing); each is revealed once the
+  // replay reaches the project where the cached run found that builder.
   const shownList = ranked.filter((_, i) => tick >= appearAt(i));
-  const isRevealed = (r: Ranked) => tick >= appearAt(pos[r.b.id]) + 6;
+  const isRevealed = (r: Ranked) => tick >= Math.max(appearAt(pos[r.b.id]) + 6, found[r.b.id] ?? 0);
   const done = tick >= SCAN_TICKS;
 
   const counts: Partial<Record<TypeKey, number>> = {};
@@ -372,7 +395,7 @@ export function deriveGrid(s: DexState, ctx: Ctx): Derived {
   let phase = "Reading Devpost projects";
   if (tick >= 24) phase = "Checking GitHub commits";
   if (tick >= 48) phase = "Comparing builders to your search";
-  const scanned = Math.min(total, Math.round((tick * 3 * total) / 214));
+  const scanned = scannedAt(tick, total);
 
   const n = ranked.length;
   const headline = !done ? "Scouting for you…" : n === 0 ? "No builders found" : n + (n === 1 ? " builder found!" : " builders found!");
