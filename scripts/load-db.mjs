@@ -51,7 +51,20 @@ const links = projects.flatMap((p) =>
 );
 
 const client = new pg.Client({ connectionString: url });
-await client.connect();
+try {
+  await client.connect();
+} catch (e) {
+  // pg treats sslmode=require as verify-full; libpq (psql) only encrypts.
+  const hint = /certificate/i.test(e.message) ? " (with sslmode=require, add &uselibpqcompat=true to DATABASE_URL)" : "";
+  console.error(`could not connect: ${e.message}${hint}`);
+  process.exit(1);
+}
+
+/** One statement per batch: a small Postgres runs out of memory parsing one ~30 MB JSON parameter. */
+async function insertAll(sql, rows, size) {
+  for (let i = 0; i < rows.length; i += size) await client.query(sql, [JSON.stringify(rows.slice(i, i + size))]);
+}
+
 try {
   await client.query("CREATE EXTENSION IF NOT EXISTS vector");
   await client.query("BEGIN");
@@ -83,29 +96,33 @@ try {
     share smallint,
     PRIMARY KEY (builder_id, project_id)
   )`);
-  await client.query(
+  await insertAll(
     `INSERT INTO talentdex.builders (id, name, data)
      SELECT r.id, r.name, r.data FROM jsonb_to_recordset($1::jsonb) AS r(id text, name text, data jsonb)`,
-    [JSON.stringify(builders)],
+    builders,
+    200,
   );
-  await client.query(
+  await insertAll(
     `INSERT INTO talentdex.projects (id, name, event, tagline, built_with, story, url)
      SELECT r.id, r.name, r.event, r.tagline, ARRAY(SELECT jsonb_array_elements_text(r.built_with)), r.story, r.url
      FROM jsonb_to_recordset($1::jsonb)
        AS r(id text, name text, event text, tagline text, built_with jsonb, story text, url text)`,
-    [JSON.stringify(rows)],
+    rows,
+    200,
   );
-  await client.query(
+  await insertAll(
     `INSERT INTO talentdex.chunks (project_id, kind, embedding)
      SELECT r.project_id, r.kind, r.embedding::vector
      FROM jsonb_to_recordset($1::jsonb) AS r(project_id text, kind text, embedding text)`,
-    [JSON.stringify(chunks)],
+    chunks,
+    250,
   );
-  await client.query(
+  await insertAll(
     `INSERT INTO talentdex.builder_projects (builder_id, project_id, share)
      SELECT r.builder_id, r.project_id, r.share
      FROM jsonb_to_recordset($1::jsonb) AS r(builder_id text, project_id text, share smallint)`,
-    [JSON.stringify(links)],
+    links,
+    1000,
   );
   await client.query("CREATE INDEX ON talentdex.chunks (project_id)");
   await client.query("CREATE INDEX ON talentdex.builder_projects (project_id)");
