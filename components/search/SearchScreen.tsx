@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type SubmitEvent } from "react";
 import { Icon } from "@/components/dex/primitives";
+import demoSearches from "@/data/demo-searches.json";
 import { encodeCriteria } from "@/lib/criteria";
 import { ACCENT, ICONS, TYPES, shade } from "@/lib/design";
 import { plural } from "@/lib/format";
@@ -28,23 +29,8 @@ const ARROW = "M5 12h14M13 6l6 6-6 6";
 const ALERT = "M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zM12 8v4.5M12 16h.01";
 const COMMIT = "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM3 12h6M15 12h6";
 
-const EXAMPLES: { label: string; text: string; type: TypeKey }[] = [
-  {
-    label: "ML intern, Toronto",
-    text: "ML intern for our applied AI team. Ideally a 3rd-year student in Toronto who has won a hackathon.",
-    type: "ml",
-  },
-  {
-    label: "Hardware co-op, Hamilton",
-    text: "Hardware co-op working on embedded C and sensors. Arduino or ESP32 experience. Any year, near Hamilton.",
-    type: "hardware",
-  },
-  {
-    label: "Backend new grad, Waterloo",
-    text: "Backend new grad who has built real APIs and databases at hackathons, based in Waterloo.",
-    type: "backend",
-  },
-];
+// The chips' texts are cached Gemini parses (scripts/cache-searches.mjs), so they live in data/.
+const EXAMPLES = demoSearches.examples as { label: string; text: string; type: TypeKey }[];
 
 const STEPS: { title: string; line: string; type: TypeKey; icon: string }[] = [
   {

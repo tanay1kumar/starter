@@ -168,3 +168,48 @@ Run with `cd pipeline && .venv/bin/python -m talentdex.run` (options: `--portfol
 - **Data gaps (quick run, before People Data Labs).** Of 351 builders, 41 list a school and 7 a
   year of study on Devpost. 266 have a city and 293 a "last active" date (the rest link no
   GitHub). Everything missing shows "Not listed" with where we looked.
+
+## Milestone 4 — Search parsing with Gemini, scan replay
+
+- **Parse order** (`lib/parse.ts`):
+  1. A cached Gemini answer from `data/searches.json`, keyed by the text with case and spacing
+     ignored.
+  2. A live Gemini call, only when `ALLOW_LIVE_GEMINI=1`; the answer is added to the cache.
+  3. The keyword rules (`lib/parse-rules.ts`), which work offline.
+
+  The demo runs with live Gemini off, so a search that isn't cached falls back to the rules
+  and never fails.
+- **What Gemini sees.** Only the recruiter's text, sent through the REST API with the key in the
+  `x-goog-api-key` header (never in a URL or a log), temperature 0, 20 s timeout. The answer is
+  constrained by a response schema with these fields:
+  - `types` (at most 2, in order of importance).
+  - `year` (0 = new grad, null when not stated).
+  - `location` (mapped to the `places.json` name).
+  - `winner`.
+  - `topic` and `topicQuery`. `topic` is a chip label of at most five words, only for
+    "built this kind of project" searches. `topicQuery` is that topic as one sentence with
+    acronyms spelled out ("retrieval-augmented generation… vector database"), for milestone
+    5's semantic search; small embedding models miss "RAG" on its own.
+- **Topic rule tightened.** The first warm-up gave the hardware chip the topic "embedded sensors
+  and microcontrollers", which only repeats the Hardware type. The prompt now says skills, tools
+  and parts are never a topic, and the cache was rebuilt with that prompt.
+- **Cached searches.** `data/demo-searches.json` holds the demo's texts: the three chips on
+  screen 0 (which now read from it), two RAG searches and a pasted job posting.
+  `scripts/cache-searches.mjs` sends them to a dev server started with `ALLOW_LIVE_GEMINI=1`.
+  Gemini's answers:
+  - ML intern chip: ML / AI, Year 3, Toronto, winner.
+  - Hardware chip: Hardware, any year, Hamilton.
+  - Backend chip: Backend, new grad, Waterloo.
+  - "Built a RAG pipeline": ML / AI + Backend, topic "RAG pipeline".
+  - Job posting: ML / AI + Backend, Year 3 ("3rd or 4th year"), Toronto, winner ("hackathon
+    winners are a plus").
+- **Scan replay.** The run records the order it checked the scanned projects and which builders
+  each one surfaced (`scan.order`). Silhouettes still appear in rank order with the design's
+  timing. Each card is revealed when the counter reaches the project where the run found that
+  builder, so a top match found late stays a silhouette until then. The counter runs to the
+  real total (215 projects), and the sample, which has no crawl order, plays exactly as before.
+- **Tests.**
+  - `tests/e2e/api.spec.ts`: every demo search is a cached Gemini parse, an uncached search
+    falls back to the rules, bad requests get a 400, and the scan carries real totals.
+  - `tests/e2e/search.spec.ts`: a chip leads to screen 1 with Gemini's chips, a topic
+    survives the URL, and the replay reveals cards as it goes (with `DATA_SOURCE=real`).

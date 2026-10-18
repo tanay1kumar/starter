@@ -151,8 +151,10 @@ export interface Criteria {
   location: string | null;
   /** Hackathon winner wanted. */
   winner: boolean;
-  /** Free-text project topic for semantic matching (milestone 5), null = none. */
+  /** Short label for a project-experience search ("RAG pipeline"), shown as a chip; null = none. */
   topic: string | null;
+  /** The topic spelled out as one sentence for the semantic search (acronyms expanded); null = none. */
+  topicQuery: string | null;
   /** The recruiter's original text. */
   text: string;
 }

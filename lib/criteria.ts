@@ -12,6 +12,7 @@ export const DEFAULT_CRITERIA: Criteria = {
   location: "Toronto",
   winner: true,
   topic: null,
+  topicQuery: null,
   text: "",
 };
 
@@ -22,13 +23,14 @@ export function encodeCriteria(c: Criteria): string {
   if (c.location) p.set("loc", c.location);
   if (c.winner) p.set("win", "1");
   if (c.topic) p.set("topic", c.topic);
+  if (c.topic && c.topicQuery && c.topicQuery !== c.topic) p.set("tq", c.topicQuery);
   if (c.text) p.set("q", c.text);
   return p.toString();
 }
 
 /** Missing params mean "no search given": fall back to the design's search. */
 export function decodeCriteria(p: URLSearchParams | null): Criteria {
-  if (!p || ![...p.keys()].some((k) => ["types", "year", "loc", "win", "topic", "q"].includes(k))) {
+  if (!p || ![...p.keys()].some((k) => ["types", "year", "loc", "win", "topic", "tq", "q"].includes(k))) {
     return { ...DEFAULT_CRITERIA };
   }
   const types = (p.get("types") || "")
@@ -38,12 +40,14 @@ export function decodeCriteria(p: URLSearchParams | null): Criteria {
     .slice(0, 2);
   const y = p.get("year");
   const year = y !== null && /^\d+$/.test(y) && +y >= 0 && +y <= 6 ? +y : null;
+  const topic = p.get("topic") || null;
   return {
     types,
     year,
     location: p.get("loc") || null,
     winner: p.get("win") === "1",
-    topic: p.get("topic") || null,
+    topic,
+    topicQuery: topic ? p.get("tq") || topic : null,
     text: p.get("q") || "",
   };
 }
@@ -81,5 +85,6 @@ export function activeCriteria(c: Criteria, removed: Record<string, boolean>): C
     location: removed.loc ? null : c.location,
     winner: removed.win ? false : c.winner,
     topic: removed.topic ? null : c.topic,
+    topicQuery: removed.topic ? null : c.topicQuery,
   };
 }

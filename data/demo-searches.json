@@ -1,0 +1,25 @@
+{
+  "_note": "Searches the demo uses. scripts/cache-searches.mjs sends every text here to /api/parse once (with ALLOW_LIVE_GEMINI=1) so data/searches.json holds Gemini's answer and the demo never calls Gemini live. examples are the chips on screen 0.",
+  "examples": [
+    {
+      "label": "ML intern, Toronto",
+      "text": "ML intern for our applied AI team. Ideally a 3rd-year student in Toronto who has won a hackathon.",
+      "type": "ml"
+    },
+    {
+      "label": "Hardware co-op, Hamilton",
+      "text": "Hardware co-op working on embedded C and sensors. Arduino or ESP32 experience. Any year, near Hamilton.",
+      "type": "hardware"
+    },
+    {
+      "label": "Backend new grad, Waterloo",
+      "text": "Backend new grad who has built real APIs and databases at hackathons, based in Waterloo.",
+      "type": "backend"
+    }
+  ],
+  "more": [
+    "Built a RAG pipeline",
+    "Someone who has built a RAG pipeline, in Toronto",
+    "Software Engineering Intern, Machine Learning (Summer 2027)\nLocation: Toronto, ON (hybrid)\n\nAbout the team\nWe build computer vision models that help grocery stores keep shelves stocked.\n\nWhat you'll do\n- Train and evaluate PyTorch models on real store images\n- Build data pipelines and small FastAPI services around them\n- Demo what you built to customers every two weeks\n\nWhat we're looking for\n- In 3rd or 4th year of Computer Science, Engineering or a related program\n- Python, plus experience with PyTorch or TensorFlow\n- Projects you shipped outside class; hackathon winners are a plus"
+  ]
+}
