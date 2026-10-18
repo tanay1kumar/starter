@@ -1,8 +1,9 @@
 // Dex entry: signature projects (tile, prize, name, description, event,
 // "Kept building", "{first} wrote N%").
 // Ported from design/extracted/markup.html (lines 514-546). Additions: the
-// project name links to its Devpost page (evidence for every claim), and
-// attribution caveat flags show as pills next to the share.
+// project name links to its Devpost page (evidence for every claim),
+// attribution caveat flags show as pills next to the share, and a builder
+// with no projects gets a plain empty state instead of an empty grid.
 
 import { ICONS } from "@/lib/design";
 import type { ProfileVM } from "@/lib/viewmodel";
@@ -20,7 +21,23 @@ export function SignatureProjects({ p }: { p: ProfileVM }) {
         </h2>
         <span style={{ fontSize: 14, fontWeight: 700, color: "#6E5A55" }}>{p.projCount}</span>
       </div>
-      <div style={{ marginTop: 18, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+      {p.projects.length === 0 && (
+        <p
+          style={{
+            margin: "18px 0 0",
+            padding: "28px 24px",
+            textAlign: "center",
+            border: "2px dashed rgba(42,23,21,.15)",
+            borderRadius: 26,
+            fontSize: 15,
+            fontWeight: 700,
+            color: "#6E5A55",
+          }}
+        >
+          No projects to show yet. Looked in Devpost.
+        </p>
+      )}
+      <div style={{ marginTop: 18, display: p.projects.length ? "grid" : "none", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
         {p.projects.map((pr) => (
           <article key={pr.id} className="proj" style={{ borderRadius: 26, background: "#FFF6EE", padding: 8 }}>
             <div
@@ -35,10 +52,11 @@ export function SignatureProjects({ p }: { p: ProfileVM }) {
                 justifyContent: "center",
               }}
             >
-              <span className="display" style={{ fontSize: 46, fontWeight: 700, color: pr.fg }}>
+              {/* The tile art is decoration (the name below says it); only the prize is read out. */}
+              <span aria-hidden="true" className="display" style={{ fontSize: 46, fontWeight: 700, color: pr.fg }}>
                 {pr.abbr}
               </span>
-              <span className="mono" style={{ position: "absolute", left: 12, bottom: 10, fontSize: 11, fontWeight: 600, color: pr.fg }}>
+              <span aria-hidden="true" className="mono" style={{ position: "absolute", left: 12, bottom: 10, fontSize: 11, fontWeight: 600, color: pr.fg }}>
                 screenshot
               </span>
               {pr.hasPrize && (

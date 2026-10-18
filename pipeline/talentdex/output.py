@@ -1,8 +1,8 @@
 """Step 8 (output): the Dataset the UI reads (lib/types.ts), as JSON.
 
 validate() checks the exact shape before anything is written, so a pipeline
-bug can't ship a half-formed data/builders.json. Postgres loading lives in
-db.py (milestone 5); without DATABASE_URL the JSON file is the only output.
+bug can't ship a half-formed data/builders.json. JSON is the pipeline's only
+output; scripts/load-db.mjs loads it into Postgres when DATABASE_URL is set.
 """
 
 from __future__ import annotations

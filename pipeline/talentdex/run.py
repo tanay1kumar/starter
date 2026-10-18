@@ -25,7 +25,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 from . import code as code_step
-from . import crawl, devpost, github
+from . import crawl, devpost, github, gitrepo
 from .attribution import Member
 from .config import CACHE_DIR, DATA_DIR
 from .gitrepo import RepoSkip, extract
@@ -220,8 +220,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--no-words", action="store_true", help="template lines instead of Gemini words")
     ap.add_argument("--no-pdl", action="store_true", help="don't spend People Data Labs lookups")
+    ap.add_argument("--no-clone", action="store_true", help="analyse only repos already cloned and cached; skip the rest")
     ap.add_argument("--out", default=str(DATA_DIR / "builders.json"))
     args = ap.parse_args(argv)
+    gitrepo.NO_CLONE = args.no_clone
 
     from . import enrich
 

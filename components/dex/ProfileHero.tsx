@@ -18,6 +18,8 @@ export function ProfileHero({
   onToggleDraft,
   heroRef,
   screenRef,
+  headingRef,
+  draftButtonRef,
 }: ProfileHeroProps) {
   return (
     <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px 48px", boxSizing: "border-box" }}>
@@ -192,7 +194,7 @@ export function ProfileHero({
         >
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
             <div style={{ minWidth: 0 }}>
-              <h1 className="display" style={{ margin: 0, fontSize: "clamp(40px, 5vw, 56px)", fontWeight: 700, lineHeight: 1 }}>
+              <h1 ref={headingRef} tabIndex={-1} className="display" style={{ margin: 0, fontSize: "clamp(40px, 5vw, 56px)", fontWeight: 700, lineHeight: 1 }}>
                 {p.name}
               </h1>
               <p style={{ margin: "8px 0 0", fontSize: 17, fontWeight: 700, color: "#6E5A55" }}>{p.meta}</p>
@@ -272,9 +274,11 @@ export function ProfileHero({
               {p.bursting && <Burst />}
             </button>
             <button
+              ref={draftButtonRef}
               type="button"
               className="press press-r display"
               aria-expanded={showDraft}
+              aria-controls={showDraft ? "say-hi-draft" : undefined}
               onClick={onToggleDraft}
               style={{
                 height: 52,

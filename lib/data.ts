@@ -14,7 +14,13 @@ export function dataSource(): DataSource {
 export async function loadDataset(source: DataSource = dataSource()): Promise<Dataset> {
   const file = source === "real" ? "builders.json" : "sample.json";
   const raw = await fs.readFile(path.join(process.cwd(), "data", file), "utf8");
-  const data = JSON.parse(raw) as Dataset;
+  let data: Dataset;
+  try {
+    data = JSON.parse(raw) as Dataset;
+  } catch {
+    // JSON.parse's message quotes the file's text; the routes log this message, so name the file instead.
+    throw new Error(`data/${file} is not valid JSON`);
+  }
   if (data.version !== 1 || !Array.isArray(data.builders)) {
     throw new Error(`data/${file} is not a Talent Dex dataset (version 1)`);
   }

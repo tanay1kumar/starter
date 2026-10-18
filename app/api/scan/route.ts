@@ -11,7 +11,9 @@ export async function GET() {
     const missing = (err as NodeJS.ErrnoException)?.code === "ENOENT";
     const message = missing
       ? `No ${source === "real" ? "data/builders.json" : "data/sample.json"} yet. Run the pipeline or set DATA_SOURCE=sample.`
-      : "Could not read the scan summary.";
+      : "Couldn't read the scan summary.";
+    // The page gets a plain line; the server log gets the reason (never the data).
+    if (!missing) console.error("/api/scan: " + (err instanceof Error ? err.message : String(err)));
     return Response.json({ error: message }, { status: missing ? 404 : 500 });
   }
 }

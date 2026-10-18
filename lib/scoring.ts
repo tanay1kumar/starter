@@ -18,11 +18,17 @@ export interface CritRow {
 }
 
 /**
- * Topic search (lib/topic.ts): builder id -> their most similar project, its cosine
- * similarity, and z: how many standard deviations that stands above all projects
- * for the same topic.
+ * Topic search (lib/topic.ts): a builder's best project for the topic, its cosine
+ * similarity, z: how many standard deviations that stands above all projects for
+ * the same topic, and the builder's share of the project's counted lines (percent).
  */
-export type TopicHits = Record<string, { similarity: number; z: number; project: string }>;
+export interface TopicHit {
+  similarity: number;
+  z: number;
+  project: string;
+  share: number | null;
+}
+export type TopicHits = Record<string, TopicHit>;
 
 /**
  * A topic match needs both: to stand out from the other projects (z), and to be
@@ -31,6 +37,16 @@ export type TopicHits = Record<string, { similarity: number; z: number; project:
  */
 export const TOPIC_MET = { z: 2.5, similarity: 0.36 };
 export const TOPIC_CLOSE = { z: 2.0, similarity: 0.32 };
+/** Writing less of the project than this (percent) makes a match Close at most. */
+export const TOPIC_MIN_SHARE = 25;
+
+export function topicStatus(h: TopicHit | undefined): "met" | "close" | "miss" {
+  if (!h) return "miss";
+  const strong = h.z >= TOPIC_MET.z && h.similarity >= TOPIC_MET.similarity;
+  if (strong && (h.share === null || h.share >= TOPIC_MIN_SHARE)) return "met";
+  if (strong || (h.z >= TOPIC_CLOSE.z && h.similarity >= TOPIC_CLOSE.similarity)) return "close";
+  return "miss";
+}
 
 const VALUE: Record<CritStatus, number> = { met: 1, close: 0.5, miss: 0, unknown: 0 };
 
@@ -109,11 +125,12 @@ function topicRow(b: Builder, topic: string, hits: TopicHits | undefined): CritR
     return { key: "topic", label: topic, status: "unknown", note: "Couldn't check projects for this topic", src: "Devpost" };
   }
   const h = hits[b.id];
-  let status: CritStatus = "miss";
-  if (h && h.z >= TOPIC_MET.z && h.similarity >= TOPIC_MET.similarity) status = "met";
-  else if (h && h.z >= TOPIC_CLOSE.z && h.similarity >= TOPIC_CLOSE.similarity) status = "close";
-  const note =
-    status === "met" ? `Built ${h!.project}, a close match` : status === "close" ? `${h!.project} is related` : "No project like this yet";
+  const status = topicStatus(h);
+  const wrote = h?.share != null ? ` (wrote ${h.share}%)` : "";
+  let note = "No project like this yet";
+  if (status === "met") note = `Built ${h!.project}${wrote}`;
+  else if (status === "close" && topicStatus({ ...h!, share: null }) === "met") note = `Wrote ${h!.share}% of ${h!.project}`;
+  else if (status === "close") note = `${h!.project} is related${wrote}`;
   return { key: "topic", label: topic, status, note, src: "Devpost" };
 }
 
@@ -143,10 +160,12 @@ export function evaluate(b: Builder, c: Criteria, hits?: TopicHits): Evaluation 
 
   // A builder is "found" when they have code in a searched type, or a project
   // like the searched topic. With neither searched, everyone in the dex counts.
+  // A topic that couldn't be checked (no hits) narrows nothing: its row says so instead.
+  const topicChecked = !!c.topic && !!hits;
   let found = true;
-  if (c.types.length || c.topic) {
+  if (c.types.length || topicChecked) {
     const typeHit = c.types.some((t) => (b.typeProjects[t] || 0) > 0);
-    const topicHit = !!c.topic && rows.some((r) => r.key === "topic" && (r.status === "met" || r.status === "close"));
+    const topicHit = topicChecked && rows.some((r) => r.key === "topic" && (r.status === "met" || r.status === "close"));
     found = typeHit || topicHit;
   }
   return {
@@ -173,9 +192,14 @@ export interface Ranked {
 }
 
 /** Best-match order: score, then wins, hackathons, name. */
+export function byMatch(x: Ranked, y: Ranked): number {
+  return y.e.score - x.e.score || y.b.wins - x.b.wins || y.b.hacks - x.b.hacks || x.b.name.localeCompare(y.b.name);
+}
+
+/** The builders this search finds, best match first. */
 export function rank(builders: Builder[], c: Criteria, hits?: TopicHits): Ranked[] {
   return builders
     .map((b) => ({ b, e: evaluate(b, c, hits) }))
     .filter((r) => r.e.found)
-    .sort((x, y) => y.e.score - x.e.score || y.b.wins - x.b.wins || y.b.hacks - x.b.hacks || x.b.name.localeCompare(y.b.name));
+    .sort(byMatch);
 }

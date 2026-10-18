@@ -39,6 +39,8 @@ from .files import code_like, counted_reason, exclusion_reason, is_readme, repo_
 
 EXTRACT_VERSION = 3
 GIT_DIR = CACHE_DIR / "git"
+# Set by run.py --no-clone: only repos already in the extract cache are analysed.
+NO_CLONE = False
 SAMPLE_LINES = 60
 HEAD_FILES_CAP = 4000
 LONG_LINE = 500
@@ -469,6 +471,9 @@ def extract(slug: str, *, refresh: bool = False) -> dict:
                 if d.get("skip"):
                     raise RepoSkip(d["skip"])
                 return d
+        if NO_CLONE:
+            # Not remembered, so a later run without --no-clone still fetches it.
+            raise RepoSkip("not cloned yet (run used --no-clone)")
 
         status, meta = github.repo_status(slug)
         if status == "missing":

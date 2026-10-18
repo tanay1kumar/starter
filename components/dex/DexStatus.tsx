@@ -6,7 +6,7 @@
 
 import { ACCENT, ICONS, shade } from "@/lib/design";
 import { SkeletonCard } from "./DexCard";
-import { HEADLINE, LID_INNER, NewScanLink, SCAN_PANEL, SCAN_STATUS } from "./GridHero";
+import { HEADLINE, LID_INNER, NewScanLink, RETRY_BUTTON, SCAN_PANEL, SCAN_STATUS } from "./GridHero";
 import { CARD_GRID, GRID_SECTION } from "./GridSection";
 import { BrandLink } from "./Header";
 import { Icon } from "./primitives";
@@ -14,12 +14,16 @@ import { Icon } from "./primitives";
 interface DexStatusProps {
   kind: "loading" | "error";
   message?: string;
+  /** What the loading line waits for; "Loading builders" unless the builders are already in. */
+  label?: string;
   onRetry?: () => void;
+  /** Focus "Try again" when the error shows: it failed again after the recruiter pressed it. */
+  focusRetry?: boolean;
 }
 
 const ALERT = "M12 6v8M12 18h.01";
 
-export function DexStatus({ kind, message, onRetry }: DexStatusProps) {
+export function DexStatus({ kind, message, label, onRetry, focusRetry }: DexStatusProps) {
   const accent = ACCENT;
   const accentDark = shade(accent, 0.24);
   const loading = kind === "loading";
@@ -53,16 +57,17 @@ export function DexStatus({ kind, message, onRetry }: DexStatusProps) {
             {loading && <span className="sweep" aria-hidden="true" />}
             <div aria-live="polite" style={SCAN_STATUS}>
               {loading ? (
-                <>
+                // Shown only if loading takes a while, so a fast load goes straight to the scan.
+                <span className="after-wait" style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
                   <span className="pulse" style={{ width: 11, height: 11, borderRadius: "50%", background: accent }} />
-                  <span>Loading builders</span>
-                </>
+                  <span>{label || "Loading builders"}</span>
+                </span>
               ) : (
                 <>
                   <span style={{ flex: "none", width: 26, height: 26, borderRadius: "50%", background: "#FFE1DC", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
                     <Icon d={ALERT} size={15} stroke="#9E2219" strokeWidth={3.2} />
                   </span>
-                  <span>{message || "Could not load builders."}</span>
+                  <span>{message || "Couldn't load builders. Try again."}</span>
                 </>
               )}
             </div>
@@ -70,22 +75,10 @@ export function DexStatus({ kind, message, onRetry }: DexStatusProps) {
               <button
                 type="button"
                 className="press press-w"
+                // The button it replaced went away while loading, so put focus back on it.
+                autoFocus={focusRetry}
                 onClick={onRetry}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  height: 44,
-                  padding: "0 18px 0 14px",
-                  borderRadius: 999,
-                  border: 0,
-                  background: "#FFFFFF",
-                  font: "inherit",
-                  fontSize: 15,
-                  fontWeight: 700,
-                  color: "#2A1715",
-                  boxShadow: "0 4px 0 rgba(42,23,21,.18)",
-                }}
+                style={RETRY_BUTTON}
               >
                 <Icon d={ICONS.rerun} size={17} strokeWidth={2.4} />
                 Try again

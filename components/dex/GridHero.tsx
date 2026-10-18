@@ -27,6 +27,25 @@ export const SCAN_PANEL: CSSProperties = {
   boxShadow: "inset 0 4px 0 rgba(42,23,21,.08)",
 };
 export const SCAN_STATUS: CSSProperties = { position: "relative", display: "flex", alignItems: "center", gap: 10, fontSize: 15, fontWeight: 700, minHeight: 30 };
+/** "Try again" in the scan panel, here for the topic check and in DexStatus for the builders. */
+export const RETRY_BUTTON: CSSProperties = {
+  // Keeps its size beside a long status line, so the label stays on one line on a phone.
+  flex: "none",
+  whiteSpace: "nowrap",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 8,
+  height: 44,
+  padding: "0 18px 0 14px",
+  borderRadius: 999,
+  border: 0,
+  background: "#FFFFFF",
+  font: "inherit",
+  fontSize: 15,
+  fontWeight: 700,
+  color: "#2A1715",
+  boxShadow: "0 4px 0 rgba(42,23,21,.18)",
+};
 
 export function NewScanLink() {
   return (
@@ -39,13 +58,14 @@ export function NewScanLink() {
 
 const WHITE_SHADOW = "0 4px 0 rgba(42,23,21,.18)";
 
-export function GridHero({ vm, accent, onRemoveFilter, onRestoreFilters, onSort, onRerun }: GridHeroProps) {
+export function GridHero({ vm, accent, onRemoveFilter, onRestoreFilters, onSort, onRerun, onRetryTopic }: GridHeroProps) {
   return (
     <div style={LID_INNER}>
       <NewScanLink />
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: 20, marginTop: 2 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0, flex: "1 1 480px" }}>
-          <h1 className="display" style={HEADLINE}>
+          {/* Focus lands here when a closed Dex entry's card is no longer in the grid. */}
+          <h1 className="display" tabIndex={-1} data-grid-headline="" style={HEADLINE}>
             {vm.headline}
           </h1>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
@@ -71,6 +91,7 @@ export function GridHero({ vm, accent, onRemoveFilter, onRestoreFilters, onSort,
                 <button
                   type="button"
                   aria-label={f.removeLabel}
+                  data-filter={f.id}
                   onClick={() => onRemoveFilter(f.id)}
                   style={{
                     width: 30,
@@ -93,6 +114,7 @@ export function GridHero({ vm, accent, onRemoveFilter, onRestoreFilters, onSort,
               <button
                 type="button"
                 className="press"
+                data-restore-filters=""
                 onClick={onRestoreFilters}
                 style={{
                   height: 38,
@@ -162,7 +184,8 @@ export function GridHero({ vm, accent, onRemoveFilter, onRestoreFilters, onSort,
 
       <div style={SCAN_PANEL}>
         {vm.scanning && <span className="sweep" aria-hidden="true" />}
-        <div aria-live="polite" style={SCAN_STATUS}>
+        {/* Not a live region: the counter changes every tick. The status line below announces the start and the end. */}
+        <div style={SCAN_STATUS}>
           {vm.scanning && (
             <>
               <span className="pulse" style={{ width: 11, height: 11, borderRadius: "50%", background: accent }} />
@@ -174,18 +197,35 @@ export function GridHero({ vm, accent, onRemoveFilter, onRestoreFilters, onSort,
           )}
           {vm.done && (
             <>
-              <span style={{ width: 26, height: 26, borderRadius: "50%", background: "#DDF5EA", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ flex: "none", width: 26, height: 26, borderRadius: "50%", background: "#DDF5EA", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
                 <Icon d={ICONS.check} size={15} stroke="#1A6B4A" strokeWidth={3.2} />
               </span>
               <span>
                 Scan complete! {vm.total} {plural(vm.total, "project")} checked.
+                {vm.topicUnchecked && (
+                  <span style={{ color: "#6E5A55" }}>
+                    {vm.topicChecking ? " Checking projects for this topic…" : " Couldn't check projects for this topic."}
+                  </span>
+                )}
               </span>
+              {/* Checks the topic again without reloading the builders or replaying the scan. */}
+              {vm.topicUnchecked && !vm.topicChecking && (
+                <button type="button" className="press press-w" data-topic-retry="" onClick={onRetryTopic} style={RETRY_BUTTON}>
+                  <Icon d={ICONS.rerun} size={17} strokeWidth={2.4} />
+                  Try again
+                </button>
+              )}
             </>
           )}
         </div>
         <div aria-hidden="true" style={{ position: "relative", flex: "1 1 260px", maxWidth: 460, height: 16, borderRadius: 999, background: "#F1E2D4", overflow: "hidden" }}>
           <div className="stripes" style={{ height: "100%", width: vm.progress, backgroundColor: "#FFCB3D", borderRadius: 999, transition: "width .15s linear" }} />
         </div>
+        {/* For screen readers: the scan's start and finish, and what the shortlist view shows. Grid only,
+            so returning from a Dex entry doesn't repeat it (a live region's first text isn't read out). */}
+        <p className="sr-only-td" role="status">
+          {vm.announce}
+        </p>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-"""Gemini (Flash) JSON calls: cached, at most 8 at a time, backoff on 429.
+"""Gemini (Flash) JSON calls: cached, at most 8 at a time, backoff on 429, 5xx and network errors.
 
 Every response is cached by (model, namespace, prompt, schema), so a re-run
 costs nothing and the demo never calls Gemini live. Callers must keep names,
@@ -15,9 +15,12 @@ import time
 from pathlib import Path
 from typing import Any
 
+import httpx
+
 from .config import CACHE_DIR, GEMINI_API_KEY, GEMINI_MODEL
 
 CONCURRENCY = 8
+TIMEOUT_MS = 90_000
 _sem = threading.BoundedSemaphore(CONCURRENCY)
 _client = None
 _client_lock = threading.Lock()
@@ -35,8 +38,10 @@ def _get_client():
             if not GEMINI_API_KEY:
                 raise GeminiError("GEMINI_API_KEY is not set in keys.env")
             from google import genai
+            from google.genai import types
 
-            _client = genai.Client(api_key=GEMINI_API_KEY)
+            # A request that hangs (a dropped VPN route, say) times out and is retried.
+            _client = genai.Client(api_key=GEMINI_API_KEY, http_options=types.HttpOptions(timeout=TIMEOUT_MS))
         return _client
 
 
@@ -44,9 +49,14 @@ def _cache_path(namespace: str, key: str) -> Path:
     return CACHE_DIR / "gemini" / namespace / key[:2] / f"{key}.json"
 
 
-def cached_only(namespace: str, prompt: str, schema: dict, *, model: str = GEMINI_MODEL) -> Any | None:
-    key = hashlib.sha1(json.dumps([model, namespace, prompt, schema], sort_keys=True).encode()).hexdigest()
-    p = _cache_path(namespace, key)
+def _key(model: str, namespace: str, system: str | None, prompt: str, schema: dict) -> str:
+    return hashlib.sha1(json.dumps([model, namespace, (system or "") + "\n" + prompt, schema], sort_keys=True).encode()).hexdigest()
+
+
+def cached_only(namespace: str, prompt: str, schema: dict, *, system: str | None = None,
+                model: str = GEMINI_MODEL) -> Any | None:
+    """The cached response generate_json() would return, or None; never calls Gemini."""
+    p = _cache_path(namespace, _key(model, namespace, system, prompt, schema))
     if p.exists():
         return json.loads(p.read_text())["response"]
     return None
@@ -63,8 +73,7 @@ def generate_json(
     max_attempts: int = 8,
 ) -> Any:
     """Return the parsed JSON response for prompt, constrained to schema (OpenAPI subset)."""
-    key = hashlib.sha1(json.dumps([model, namespace, (system or "") + "\n" + prompt, schema], sort_keys=True).encode()).hexdigest()
-    path = _cache_path(namespace, key)
+    path = _cache_path(namespace, _key(model, namespace, system, prompt, schema))
     if path.exists():
         stats["cached"] += 1
         return json.loads(path.read_text())["response"]
@@ -96,6 +105,8 @@ def generate_json(
                 if code not in (429, 500, 502, 503, 504):
                     raise GeminiError(f"Gemini error {code}: {str(e)[:300]}") from e
             except (json.JSONDecodeError, ValueError) as e:  # truncated/invalid JSON: retry
+                last = e
+            except (httpx.TransportError, OSError) as e:  # network blip (DNS, reset, timeout): retry
                 last = e
         stats["retries"] += 1
         time.sleep(min(60.0, (2 ** attempt) + random.random()))

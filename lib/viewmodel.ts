@@ -4,8 +4,8 @@
 import type { CSSProperties } from "react";
 import { criteriaChips, type FilterChip } from "./criteria";
 import { AXES, ICONS, NATURES, STATUS, TRAIT_LABELS, TYPES, avatar, judge, shade, type AvatarShape } from "./design";
-import { NOT_LISTED, firstName, listNames, lookedIn, relativeDay, sentence, yearLabel } from "./format";
-import { rank, type Evaluation, type Ranked, type SortKey, type TopicHits } from "./scoring";
+import { NOT_LISTED, firstName, listNames, lookedIn, plural, relativeDay, sentence, yearLabel } from "./format";
+import { byMatch, evaluate, rank, type Evaluation, type Ranked, type SortKey, type TopicHits } from "./scoring";
 import type { Builder, CritStatus, Criteria, Dataset, TypeKey } from "./types";
 
 // Scan replay timing, from the design: a 60 ms tick, 500 ms start delay, done at tick 76.
@@ -22,13 +22,16 @@ export type TabKey = "all" | TypeKey;
 export interface DexState {
   tick: number;
   filter: TabKey;
+  /** The header's Shortlist button: the grid shows only shortlisted builders. */
+  shortlistOnly: boolean;
   sort: SortKey;
   starred: Record<string, boolean>;
   seen: Record<string, boolean>;
   removed: Record<string, boolean>;
   open: string | null;
   showDraft: boolean;
-  copied: boolean;
+  /** Result of the last "Copy email", shown on the button for a moment. */
+  copied: false | "ok" | "failed";
   burst: string | null;
   tab: "ev" | "iv";
   limit: number;
@@ -38,6 +41,7 @@ export function initialState(starred: Record<string, boolean> = {}): DexState {
   return {
     tick: 0,
     filter: "all",
+    shortlistOnly: false,
     sort: "match",
     starred,
     seen: {},
@@ -116,9 +120,22 @@ export interface GridVM {
   skeletons: number;
   noneVisible: boolean;
   noneFound: boolean;
+  /** The shortlist view is on and nobody is on the shortlist. */
+  shortlistEmpty: boolean;
+  /** A topic was searched but its project check failed, so the topic changes no one's rank. */
+  topicUnchecked: boolean;
+  /** "Try again" is checking the topic's projects once more. */
+  topicChecking: boolean;
   moreCount: number;
   starCount: number;
   seenCount: number;
+  shortlistOn: boolean;
+  /**
+   * For screen readers (a polite status region): the scan's start and finish, or
+   * what the shortlist view shows. Constant while the counter ticks, so it is
+   * announced once per change, not on every tick.
+   */
+  announce: string;
 }
 
 export interface CritVM {
@@ -258,6 +275,8 @@ export interface Ctx {
   search: Criteria;
   accent: string;
   hits?: TopicHits;
+  /** The topic check failed and is being tried again. */
+  topicChecking?: boolean;
   now?: Date;
 }
 
@@ -324,14 +343,27 @@ export function deriveGrid(s: DexState, ctx: Ctx): Derived {
   // Silhouettes appear in rank order (design timing); each is revealed once the
   // replay reaches the project where the cached run found that builder.
   const shownList = ranked.filter((_, i) => tick >= appearAt(i));
-  const isRevealed = (r: Ranked) => tick >= Math.max(appearAt(pos[r.b.id]) + 6, found[r.b.id] ?? 0);
+  // The shortlist view (header button, not in the design): everyone shortlisted, in
+  // this search's results or not, ranked against this search. They are the recruiter's
+  // own picks, so the replay doesn't hide them. A builder taken off from their open Dex
+  // entry stays in it until the entry closes, so its place and prev/next keep working.
+  const starredList = data.builders.filter((b) => s.starred[b.id]);
+  const shortlist = s.shortlistOnly
+    ? data.builders
+        .filter((b) => s.starred[b.id] || b.id === s.open)
+        .map((b) => (b.id in pos ? ranked[pos[b.id]] : { b, e: evaluate(b, criteria, ctx.hits) }))
+        .sort(byMatch)
+    : [];
+  const isRevealed = (r: Ranked) => s.shortlistOnly || tick >= Math.max(appearAt(pos[r.b.id]) + 6, found[r.b.id] ?? 0);
   const done = tick >= SCAN_TICKS;
 
   const counts: Partial<Record<TypeKey, number>> = {};
   shownList.forEach((r) => r.b.types.forEach((k) => (counts[k] = (counts[k] || 0) + 1)));
-  const tabKeys: TabKey[] = ["all", ...AXES.filter((k) => counts[k])];
+  // The picked tab stays, even at 0 (a chip change or a replay can empty it), so a tab is
+  // always pressed; the empty-tab line below says why it has no cards.
+  const tabKeys: TabKey[] = ["all", ...AXES.filter((k) => counts[k] || (k === s.filter && !s.shortlistOnly))];
   const tabs: TabVM[] = tabKeys.map((k) => {
-    const on = k === s.filter;
+    const on = k === s.filter && !s.shortlistOnly;
     return {
       key: k,
       label: k === "all" ? "All" : TYPES[k].label,
@@ -345,7 +377,11 @@ export function deriveGrid(s: DexState, ctx: Ctx): Derived {
     };
   });
 
-  const visible = s.filter === "all" ? shownList.slice() : shownList.filter((r) => r.b.types.includes(s.filter as TypeKey));
+  const visible = s.shortlistOnly
+    ? shortlist
+    : s.filter === "all"
+      ? shownList.slice()
+      : shownList.filter((r) => r.b.types.includes(s.filter as TypeKey));
   if (s.sort === "wins") visible.sort((a, b) => b.b.wins - a.b.wins || b.e.score - a.e.score);
   if (s.sort === "hacks") visible.sort((a, b) => b.b.hacks - a.b.hacks || b.e.score - a.e.score);
 
@@ -385,8 +421,10 @@ export function deriveGrid(s: DexState, ctx: Ctx): Derived {
     };
   });
 
-  const remaining = ranked.length - shownList.length;
-  const skeletons = done || s.filter !== "all" ? 0 : Math.min(3, remaining);
+  // Skeletons for the cards still to come in this tab, as on All.
+  const inTab = (r: Ranked) => s.filter === "all" || r.b.types.includes(s.filter);
+  const remaining = ranked.filter(inTab).length - shownList.filter(inTab).length;
+  const skeletons = done || s.shortlistOnly ? 0 : Math.min(3, remaining);
 
   const filters: FilterVM[] = criteriaChips(search)
     .filter((f) => !s.removed[f.id])
@@ -399,6 +437,21 @@ export function deriveGrid(s: DexState, ctx: Ctx): Derived {
 
   const n = ranked.length;
   const headline = !done ? "Scouting for you…" : n === 0 ? "No builders found" : n + (n === 1 ? " builder found!" : " builders found!");
+  const topicUnchecked = !!criteria.topic && !ctx.hits;
+
+  // Worded unlike the visible panel line and headline, so looking one of those up by its
+  // text never also finds this line.
+  const projects = data.scan.projectsChecked + " " + plural(data.scan.projectsChecked, "project");
+  let announce = "";
+  if (s.shortlistOnly) {
+    const k = shortlist.length;
+    announce = k ? "Showing your shortlist: " + k + " " + plural(k, "builder") + "." : "Your shortlist is empty.";
+  } else if (done) {
+    announce = "Scan finished: " + projects + " checked. " + (n === 0 ? "Found no builders." : "Found " + n + " " + plural(n, "builder") + ".");
+    if (topicUnchecked) announce += ctx.topicChecking ? " Checking the project topic again." : " The project topic couldn't be checked.";
+  } else if (tick > 0) {
+    announce = "Scan started. Checking " + projects + ".";
+  }
 
   return {
     ranked,
@@ -417,11 +470,17 @@ export function deriveGrid(s: DexState, ctx: Ctx): Derived {
       tabs,
       cards,
       skeletons,
-      noneVisible: cards.length === 0 && skeletons === 0 && shownList.length > 0,
-      noneFound: done && n === 0,
+      noneVisible: !s.shortlistOnly && cards.length === 0 && skeletons === 0 && shownList.length > 0,
+      noneFound: !s.shortlistOnly && done && n === 0,
+      shortlistEmpty: s.shortlistOnly && visible.length === 0,
+      topicUnchecked,
+      topicChecking: topicUnchecked && !!ctx.topicChecking,
       moreCount: Math.max(0, visible.length - s.limit),
-      starCount: Object.keys(s.starred).filter((k) => s.starred[k]).length,
+      // Only builders in this dataset: a stored shortlist can name people a newer run dropped.
+      starCount: starredList.length,
       seenCount: Object.keys(s.seen).length,
+      shortlistOn: s.shortlistOnly,
+      announce,
     },
   };
 }
@@ -587,7 +646,7 @@ export function deriveProfile(s: DexState, ctx: Ctx, id: string, e: Evaluation, 
     draftBody: top
       ? "Hi " + first + ",\n\nI came across " + top.name + " on Devpost. " + sentence(top.desc) + " That's an impressive build for one weekend.\n\nI'm hiring for [ROLE] at [COMPANY], working on [TEAM OR PRODUCT]. Your " + topTypeLabel + " work stood out, and I think you'd be a great fit.\n\nWould you be open to a 20-minute chat next week?\n\n[YOUR NAME]"
       : "Hi " + first + ",\n\nI'm hiring for [ROLE] at [COMPANY], working on [TEAM OR PRODUCT]. Your " + topTypeLabel + " work stood out, and I think you'd be a great fit.\n\nWould you be open to a 20-minute chat next week?\n\n[YOUR NAME]",
-    backLabel: "All " + order.length + " builders",
+    backLabel: "All " + order.length + " " + plural(order.length, "builder"),
     pos: idx >= 0 ? idx + 1 + " of " + order.length : "",
     prevLabel: prev ? "#" + prev.dex + " " + firstName(prev.name) : "Start",
     nextLabel: next ? "#" + next.dex + " " + firstName(next.name) : "End",

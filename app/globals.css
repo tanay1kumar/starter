@@ -36,7 +36,7 @@ a{color:#2A1715}a:hover{color:#B8261C}
 .press-r:active{transform:translateY(3px)}
 .dex-card{transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s ease}
 .dex-card:hover{transform:translateY(-7px) rotate(-.7deg)}
-.dex-card:hover .sprite{animation:hop .55s cubic-bezier(.34,1.56,.64,1)}
+.dex-card:hover .av-hop{animation:hop .55s cubic-bezier(.34,1.56,.64,1)}
 @keyframes hop{0%{transform:translateY(0)}40%{transform:translateY(-12px) scale(1.04)}100%{transform:translateY(0)}}
 .t-ml:hover{box-shadow:0 7px 0 rgba(91,63,214,.35),0 28px 44px -24px rgba(91,63,214,.55)!important}
 .t-frontend:hover{box-shadow:0 7px 0 rgba(180,68,26,.3),0 28px 44px -24px rgba(180,68,26,.5)!important}
@@ -81,6 +81,25 @@ a{color:#2A1715}a:hover{color:#B8261C}
 .pill-link:hover{transform:translateY(-2px);color:#2A1715!important}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 /* ---- end of design styles ---- */
+/* Changed from the design file: its avatar class is renamed .av-hop (BUILD.md bans the word). */
+
+/* Headings and the hero are focused by script when the screen changes (tabIndex -1).
+   They are not controls, so no ring; every control keeps the :focus-visible ring above. */
+[tabindex="-1"]:focus{outline:none}
+
+/* Reduced motion, on top of the design's rule above: no animation delays either, so
+   content appears at once rather than after a hidden pause, and the scan's decorative
+   sweep is hidden (stopped, it would sit as a stray glow in the panel). */
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-delay:0s!important;transition-delay:0s!important}.sweep{display:none}}
+/* Hover and press lifts, tilts and jumps stay put under reduced motion; their colour and
+   shadow changes still show. */
+@media (prefers-reduced-motion: reduce){.press:hover,.press:active,.press-y:active,.press-w:active,.press-r:active,.dex-card:hover,.proj:hover,.pill-link:hover,.star:hover svg{transform:none!important}}
+
+/* A loading line that only shows once loading takes a while (0.4 s), so a fast
+   response never flashes it. It doesn't move, so reduced motion keeps the wait. */
+.after-wait{animation:after-wait 0s linear .4s backwards}
+@keyframes after-wait{from,to{visibility:hidden}}
+@media (prefers-reduced-motion: reduce){.after-wait{animation-delay:.4s!important}}
 
 /* SVG <text> in the design names families directly ("Geist Mono, monospace");
    next/font renames families, so SVG text uses these classes instead. */
