@@ -17,11 +17,20 @@ export interface CritRow {
   src: string;
 }
 
-/** Semantic matches for a topic search (milestone 5): builder id -> best project + similarity. */
-export type TopicHits = Record<string, { similarity: number; project: string }>;
+/**
+ * Topic search (lib/topic.ts): builder id -> their most similar project, its cosine
+ * similarity, and z: how many standard deviations that stands above all projects
+ * for the same topic.
+ */
+export type TopicHits = Record<string, { similarity: number; z: number; project: string }>;
 
-export const TOPIC_MET = 0.62;
-export const TOPIC_CLOSE = 0.52;
+/**
+ * A topic match needs both: to stand out from the other projects (z), and to be
+ * similar in absolute terms, so a topic no one built matches no one.
+ * Calibrated on the real projects; see NOTES.md (milestone 5).
+ */
+export const TOPIC_MET = { z: 2.5, similarity: 0.36 };
+export const TOPIC_CLOSE = { z: 2.0, similarity: 0.32 };
 
 const VALUE: Record<CritStatus, number> = { met: 1, close: 0.5, miss: 0, unknown: 0 };
 
@@ -95,11 +104,16 @@ function winnerRow(b: Builder): CritRow {
 }
 
 function topicRow(b: Builder, topic: string, hits: TopicHits | undefined): CritRow {
-  const h = hits ? hits[b.id] : undefined;
+  if (!hits) {
+    // The topic search didn't run (no embeddings, or it failed): say so rather than guess.
+    return { key: "topic", label: topic, status: "unknown", note: "Couldn't check projects for this topic", src: "Devpost" };
+  }
+  const h = hits[b.id];
   let status: CritStatus = "miss";
-  if (h && h.similarity >= TOPIC_MET) status = "met";
-  else if (h && h.similarity >= TOPIC_CLOSE) status = "close";
-  const note = h && status !== "miss" ? `${h.project} is a close match` : `No project like this yet`;
+  if (h && h.z >= TOPIC_MET.z && h.similarity >= TOPIC_MET.similarity) status = "met";
+  else if (h && h.z >= TOPIC_CLOSE.z && h.similarity >= TOPIC_CLOSE.similarity) status = "close";
+  const note =
+    status === "met" ? `Built ${h!.project}, a close match` : status === "close" ? `${h!.project} is related` : "No project like this yet";
   return { key: "topic", label: topic, status, note, src: "Devpost" };
 }
 
@@ -132,7 +146,7 @@ export function evaluate(b: Builder, c: Criteria, hits?: TopicHits): Evaluation 
   let found = true;
   if (c.types.length || c.topic) {
     const typeHit = c.types.some((t) => (b.typeProjects[t] || 0) > 0);
-    const topicHit = !!c.topic && rows.some((r) => r.key === "topic" && r.status !== "miss");
+    const topicHit = !!c.topic && rows.some((r) => r.key === "topic" && (r.status === "met" || r.status === "close"));
     found = typeHit || topicHit;
   }
   return {

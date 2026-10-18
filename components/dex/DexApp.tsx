@@ -9,7 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { activeCriteria, decodeCriteria, encodeCriteria } from "@/lib/criteria";
 import { ACCENT, ICONS, reducedMotion, shade } from "@/lib/design";
-import { evaluate, type SortKey } from "@/lib/scoring";
+import { evaluate, type SortKey, type TopicHits } from "@/lib/scoring";
 import type { Criteria, Dataset } from "@/lib/types";
 import {
   PAGE_SIZE,
@@ -36,6 +36,9 @@ export default function DexApp() {
   const [data, setData] = useState<Dataset | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
+  // A topic search ("built a RAG pipeline") also needs the builders whose projects are like it.
+  const topicQuery = search.topic ? search.topicQuery || search.topic : null;
+  const [topic, setTopic] = useState<{ query: string; hits: TopicHits | undefined } | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -52,6 +55,27 @@ export default function DexApp() {
     };
   }, [attempt]);
 
+  useEffect(() => {
+    if (!topicQuery) return;
+    let live = true;
+    fetch("/api/topic", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: topicQuery }),
+    })
+      .then(async (r) => {
+        const body = await r.json().catch(() => null);
+        if (!r.ok || !body?.hits) throw new Error(body?.error || "topic search failed");
+        return body.hits as TopicHits;
+      })
+      // Without hits the topic row says it couldn't be checked; the rest of the search still runs.
+      .then((hits) => live && setTopic({ query: topicQuery, hits }))
+      .catch(() => live && setTopic({ query: topicQuery, hits: undefined }));
+    return () => {
+      live = false;
+    };
+  }, [topicQuery, attempt]);
+
   if (error) {
     return (
       <DexStatus
@@ -64,9 +88,9 @@ export default function DexApp() {
       />
     );
   }
-  if (!data) return <DexStatus kind="loading" />;
+  if (!data || (topicQuery && topic?.query !== topicQuery)) return <DexStatus kind="loading" />;
   // A new search remounts the screens, so the scan replays from the start.
-  return <DexScreens key={encodeCriteria(search)} data={data} search={search} />;
+  return <DexScreens key={encodeCriteria(search)} data={data} search={search} hits={topicQuery ? topic?.hits : undefined} />;
 }
 
 function storageKey(data: Dataset, what: string) {
@@ -98,7 +122,7 @@ function safeStorage(kind: "local" | "session"): Storage | null {
   }
 }
 
-function DexScreens({ data, search }: { data: Dataset; search: Criteria }) {
+function DexScreens({ data, search, hits }: { data: Dataset; search: Criteria; hits?: TopicHits }) {
   const accent = ACCENT;
   const accentDark = shade(accent, 0.24);
 
@@ -152,17 +176,17 @@ function DexScreens({ data, search }: { data: Dataset; search: Criteria }) {
   // ---- Derived view models ----
   const criteria = useMemo(() => activeCriteria(search, s.removed), [search, s.removed]);
   const ctx = useMemo(
-    () => ({ data, criteria, search, accent, now: data.source === "sample" ? new Date(data.generatedAt) : undefined }),
-    [data, criteria, search, accent],
+    () => ({ data, criteria, search, accent, hits, now: data.source === "sample" ? new Date(data.generatedAt) : undefined }),
+    [data, criteria, search, accent, hits],
   );
   const { ranked, grid, order } = useMemo(() => deriveGrid(s, ctx), [s, ctx]);
   const profile = useMemo(() => {
     if (!s.open) return null;
     const b = data.builders.find((x) => x.id === s.open);
     if (!b) return null;
-    const e = ranked.find((r) => r.b.id === s.open)?.e || evaluate(b, criteria);
+    const e = ranked.find((r) => r.b.id === s.open)?.e || evaluate(b, criteria, hits);
     return deriveProfile(s, ctx, s.open, e, order);
-  }, [s, ctx, data, ranked, criteria, order]);
+  }, [s, ctx, data, ranked, criteria, order, hits]);
 
   // ---- Refs for motion (design: refs()) ----
   const heroEl = useRef<HTMLDivElement>(null);

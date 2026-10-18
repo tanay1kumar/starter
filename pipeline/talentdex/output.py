@@ -123,3 +123,30 @@ def write_json(dataset: dict, path: str | Path) -> Path:
     tmp.write_text(json.dumps(dataset, indent=1, ensure_ascii=False) + "\n")
     tmp.replace(path)
     return path
+
+
+PROJECT_KEYS = {"id", "name", "event", "tagline", "builtWith", "story", "url", "builders"}
+
+
+def validate_projects(doc: dict) -> None:
+    """data/projects.json: every project a builder has counted code on, with its Devpost text."""
+    if doc.get("version") != 1 or not isinstance(doc.get("projects"), list):
+        raise ValueError("projects.json: version 1 with a projects list expected")
+    seen = set()
+    for p in doc["projects"]:
+        if set(p) != PROJECT_KEYS:
+            raise ValueError(f"projects.json {p.get('id')!r}: keys {sorted(set(p) ^ PROJECT_KEYS)}")
+        if p["id"] in seen:
+            raise ValueError(f"projects.json: duplicate project {p['id']!r}")
+        seen.add(p["id"])
+        if not p["builders"] or any(set(b) != {"id", "share"} for b in p["builders"]):
+            raise ValueError(f"projects.json {p['id']!r}: builders must be [{{id, share}}, ...]")
+
+
+def write_projects(doc: dict, path: str | Path) -> Path:
+    validate_projects(doc)
+    path = Path(path)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
+    tmp.replace(path)
+    return path
