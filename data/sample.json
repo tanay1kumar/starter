@@ -1,0 +1,1568 @@
+{
+  "version": 1,
+  "source": "sample",
+  "generatedAt": "2026-10-17T12:00:00-04:00",
+  "scan": {
+    "hackathons": [],
+    "projectsChecked": 214,
+    "reposChecked": 0,
+    "commitsCounted": 0,
+    "buildersFound": 214
+  },
+  "builders": [
+    {
+      "id": "maya",
+      "name": "Maya Chen",
+      "dex": "0042",
+      "types": [
+        "ml",
+        "backend"
+      ],
+      "school": {
+        "value": "UofT",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "schoolFull": {
+        "value": "University of Toronto",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "program": {
+        "value": "Computer Science",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "grad": {
+        "value": "April 2028",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "year": {
+        "value": 3,
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "city": {
+        "value": "Toronto",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "lastActive": {
+        "value": "2026-10-15T16:00:00.000Z",
+        "source": "GitHub",
+        "looked": [
+          "GitHub"
+        ]
+      },
+      "links": {
+        "devpost": "https://devpost.com",
+        "github": "https://github.com",
+        "linkedin": "https://www.linkedin.com"
+      },
+      "hacks": 7,
+      "wins": 3,
+      "repos": 41,
+      "why": "Won Best Use of ML twice. 3rd year, based in Toronto.",
+      "sum": "Turns messy real-world data into ML demos that work on the first try.",
+      "ev": {
+        "ml": 252,
+        "backend": 168,
+        "frontend": 64,
+        "design": 26,
+        "mobile": 0,
+        "hardware": 0
+      },
+      "evFrom": {
+        "ml": [
+          "Sightline",
+          "Pantry Pal",
+          "Transit Pulse"
+        ],
+        "backend": [
+          "Sightline",
+          "Pantry Pal"
+        ],
+        "frontend": [
+          "Pantry Pal",
+          "Transit Pulse"
+        ],
+        "design": [
+          "Pantry Pal"
+        ]
+      },
+      "iv": [
+        31,
+        30,
+        27,
+        22,
+        19,
+        11
+      ],
+      "n": {
+        "demo": 7,
+        "own": 5,
+        "mates": 9,
+        "kept": 2,
+        "docs": 3
+      },
+      "codeProjects": 7,
+      "typeProjects": {
+        "ml": 6,
+        "backend": 2,
+        "frontend": 2,
+        "design": 1,
+        "mobile": 0,
+        "hardware": 0
+      },
+      "projects": [
+        {
+          "id": "sightline",
+          "name": "Sightline",
+          "abbr": "Si",
+          "type": "ml",
+          "event": "Hack the North 2025",
+          "desc": "Real-time sign-language captions in the browser.",
+          "prize": "Best Use of ML",
+          "prizes": [
+            "Best Use of ML"
+          ],
+          "kept": true,
+          "share": 58,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        },
+        {
+          "id": "pantry-pal",
+          "name": "Pantry Pal",
+          "abbr": "Pp",
+          "type": "backend",
+          "event": "UofTHacks 12",
+          "desc": "Snap your fridge, get a week of recipes that cut food waste.",
+          "prize": "Best ML Hack",
+          "prizes": [
+            "Best ML Hack"
+          ],
+          "kept": false,
+          "share": 44,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        },
+        {
+          "id": "transit-pulse",
+          "name": "Transit Pulse",
+          "abbr": "Tp",
+          "type": "mobile",
+          "event": "Hack the 6ix 2024",
+          "desc": "Predicts TTC delays from live transit feeds.",
+          "prize": "2nd overall",
+          "prizes": [
+            "2nd overall"
+          ],
+          "kept": true,
+          "share": 71,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        }
+      ]
+    },
+    {
+      "id": "arjun",
+      "name": "Arjun Patel",
+      "dex": "0117",
+      "types": [
+        "ml",
+        "mobile"
+      ],
+      "school": {
+        "value": "Waterloo",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "schoolFull": {
+        "value": "University of Waterloo",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "program": {
+        "value": "Software Engineering (co-op)",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "grad": {
+        "value": "April 2028",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "year": {
+        "value": 3,
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "city": {
+        "value": "Waterloo",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "lastActive": {
+        "value": "2026-10-17T16:00:00.000Z",
+        "source": "GitHub",
+        "looked": [
+          "GitHub"
+        ]
+      },
+      "links": {
+        "devpost": "https://devpost.com",
+        "github": "https://github.com",
+        "linkedin": "https://www.linkedin.com"
+      },
+      "hacks": 9,
+      "wins": 2,
+      "repos": 56,
+      "why": "Shipped 4 ML projects. About an hour from Toronto.",
+      "sum": "Ships polished ML features inside mobile apps, and ships them fast.",
+      "ev": {
+        "ml": 220,
+        "backend": 80,
+        "frontend": 30,
+        "design": 0,
+        "mobile": 180,
+        "hardware": 0
+      },
+      "evFrom": {
+        "ml": [
+          "Crop Doctor",
+          "Gesture Keys",
+          "Earlier project 1",
+          "Earlier project 2",
+          "Earlier project 3"
+        ],
+        "backend": [
+          "Crop Doctor"
+        ],
+        "frontend": [
+          "Gesture Keys"
+        ],
+        "mobile": [
+          "Crop Doctor",
+          "Gesture Keys"
+        ]
+      },
+      "iv": [
+        28,
+        26,
+        20,
+        30,
+        24,
+        21
+      ],
+      "n": {
+        "demo": 8,
+        "own": 4,
+        "mates": 14,
+        "kept": 3,
+        "docs": 6
+      },
+      "codeProjects": 9,
+      "typeProjects": {
+        "ml": 5,
+        "backend": 1,
+        "frontend": 1,
+        "design": 0,
+        "mobile": 2,
+        "hardware": 0
+      },
+      "projects": [
+        {
+          "id": "crop-doctor",
+          "name": "Crop Doctor",
+          "abbr": "Cd",
+          "type": "ml",
+          "event": "Hack the North 2025",
+          "desc": "Snap a leaf to diagnose crop disease, fully offline.",
+          "prize": "Best Mobile Hack",
+          "prizes": [
+            "Best Mobile Hack"
+          ],
+          "kept": true,
+          "share": 63,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        },
+        {
+          "id": "gesture-keys",
+          "name": "Gesture Keys",
+          "abbr": "Gk",
+          "type": "mobile",
+          "event": "DeltaHacks 11",
+          "desc": "Type with hand gestures using any phone camera.",
+          "prize": "",
+          "prizes": [],
+          "kept": false,
+          "share": 52,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        }
+      ]
+    },
+    {
+      "id": "sofia",
+      "name": "Sofia Reyes",
+      "dex": "0208",
+      "types": [
+        "frontend",
+        "design"
+      ],
+      "school": {
+        "value": "TMU",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "schoolFull": {
+        "value": "Toronto Metropolitan University",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "program": {
+        "value": "Computer Science",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "grad": {
+        "value": "April 2028",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "year": {
+        "value": 3,
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "city": {
+        "value": "Toronto",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "lastActive": {
+        "value": "2026-10-12T16:00:00.000Z",
+        "source": "GitHub",
+        "looked": [
+          "GitHub"
+        ]
+      },
+      "links": {
+        "devpost": "https://devpost.com",
+        "github": "https://github.com",
+        "linkedin": "https://www.linkedin.com"
+      },
+      "hacks": 5,
+      "wins": 2,
+      "repos": 23,
+      "why": "Built the ML demo UI on two winning teams.",
+      "sum": "Makes ML demos feel like real products. The UI is why judges remember them.",
+      "ev": {
+        "ml": 40,
+        "backend": 60,
+        "frontend": 240,
+        "design": 170,
+        "mobile": 0,
+        "hardware": 0
+      },
+      "evFrom": {
+        "ml": [
+          "Lumen"
+        ],
+        "backend": [
+          "Mood Garden"
+        ],
+        "frontend": [
+          "Lumen",
+          "Mood Garden",
+          "Earlier project 1",
+          "Earlier project 2",
+          "Earlier project 3"
+        ],
+        "design": [
+          "Mood Garden",
+          "Lumen"
+        ]
+      },
+      "iv": [
+        29,
+        27,
+        15,
+        26,
+        12,
+        28
+      ],
+      "n": {
+        "demo": 5,
+        "own": 2,
+        "mates": 8,
+        "kept": 1,
+        "docs": 5
+      },
+      "codeProjects": 5,
+      "typeProjects": {
+        "ml": 1,
+        "backend": 1,
+        "frontend": 5,
+        "design": 2,
+        "mobile": 0,
+        "hardware": 0
+      },
+      "projects": [
+        {
+          "id": "lumen",
+          "name": "Lumen",
+          "abbr": "Lu",
+          "type": "frontend",
+          "event": "UofTHacks 12",
+          "desc": "An accessible reading mode powered by an ML summarizer.",
+          "prize": "Best UI",
+          "prizes": [
+            "Best UI"
+          ],
+          "kept": false,
+          "share": 66,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        },
+        {
+          "id": "mood-garden",
+          "name": "Mood Garden",
+          "abbr": "Mg",
+          "type": "design",
+          "event": "Hack the 6ix 2025",
+          "desc": "A journaling app that grows a garden as you write.",
+          "prize": "Best Design",
+          "prizes": [
+            "Best Design"
+          ],
+          "kept": true,
+          "share": 72,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        }
+      ]
+    },
+    {
+      "id": "daniel",
+      "name": "Daniel Okafor",
+      "dex": "0073",
+      "types": [
+        "backend",
+        "ml"
+      ],
+      "school": {
+        "value": "UofT",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "schoolFull": {
+        "value": "University of Toronto",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "program": {
+        "value": "Computer Engineering",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "grad": {
+        "value": "April 2027",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "year": {
+        "value": 4,
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "city": {
+        "value": "Toronto",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "lastActive": {
+        "value": "2026-10-16T16:00:00.000Z",
+        "source": "GitHub",
+        "looked": [
+          "GitHub"
+        ]
+      },
+      "links": {
+        "devpost": "https://devpost.com",
+        "github": "https://github.com",
+        "linkedin": "https://www.linkedin.com"
+      },
+      "hacks": 11,
+      "wins": 1,
+      "repos": 64,
+      "why": "Wrote the inference API for a winning ML hack.",
+      "sum": "The person who makes the model actually serve real traffic.",
+      "ev": {
+        "ml": 160,
+        "backend": 252,
+        "frontend": 50,
+        "design": 0,
+        "mobile": 0,
+        "hardware": 48
+      },
+      "evFrom": {
+        "ml": [
+          "Model Mart",
+          "Queue Less"
+        ],
+        "backend": [
+          "Queue Less",
+          "Model Mart",
+          "Earlier project 1",
+          "Earlier project 2",
+          "Earlier project 3",
+          "Earlier project 4",
+          "Earlier project 5",
+          "Earlier project 6"
+        ],
+        "frontend": [
+          "Queue Less"
+        ],
+        "hardware": [
+          "2 earlier projects"
+        ]
+      },
+      "iv": [
+        25,
+        16,
+        29,
+        24,
+        30,
+        30
+      ],
+      "n": {
+        "demo": 9,
+        "own": 8,
+        "mates": 12,
+        "kept": 5,
+        "docs": 9
+      },
+      "codeProjects": 11,
+      "typeProjects": {
+        "ml": 7,
+        "backend": 8,
+        "frontend": 1,
+        "design": 0,
+        "mobile": 0,
+        "hardware": 2
+      },
+      "projects": [
+        {
+          "id": "queue-less",
+          "name": "Queue Less",
+          "abbr": "Ql",
+          "type": "backend",
+          "event": "Hack the 6ix 2025",
+          "desc": "Real-time ER wait estimates from public data feeds.",
+          "prize": "Best Civic Hack",
+          "prizes": [
+            "Best Civic Hack"
+          ],
+          "kept": true,
+          "share": 81,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        },
+        {
+          "id": "model-mart",
+          "name": "Model Mart",
+          "abbr": "Mm",
+          "type": "ml",
+          "event": "UofTHacks 11",
+          "desc": "One-click hosting for student ML models.",
+          "prize": "",
+          "prizes": [],
+          "kept": true,
+          "share": 77,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        }
+      ]
+    },
+    {
+      "id": "lina",
+      "name": "Lina Haddad",
+      "dex": "0311",
+      "types": [
+        "hardware",
+        "ml"
+      ],
+      "school": {
+        "value": "McMaster",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "schoolFull": {
+        "value": "McMaster University",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "program": {
+        "value": "Mechatronics Engineering",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "grad": {
+        "value": "April 2028",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "year": {
+        "value": 3,
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "city": {
+        "value": "Hamilton",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "lastActive": {
+        "value": "2026-10-14T16:00:00.000Z",
+        "source": "GitHub",
+        "looked": [
+          "GitHub"
+        ]
+      },
+      "links": {
+        "devpost": "https://devpost.com",
+        "github": "https://github.com",
+        "linkedin": "https://www.linkedin.com"
+      },
+      "hacks": 6,
+      "wins": 2,
+      "repos": 18,
+      "why": "On-device ML for a prize-winning wearable.",
+      "sum": "Puts small ML models on tiny devices that actually last on a battery.",
+      "ev": {
+        "ml": 170,
+        "backend": 40,
+        "frontend": 30,
+        "design": 0,
+        "mobile": 30,
+        "hardware": 240
+      },
+      "evFrom": {
+        "ml": [
+          "Bee Count",
+          "Fall Guard"
+        ],
+        "backend": [
+          "Fall Guard"
+        ],
+        "frontend": [
+          "Bee Count"
+        ],
+        "mobile": [
+          "Fall Guard"
+        ],
+        "hardware": [
+          "Fall Guard",
+          "Bee Count",
+          "Earlier project 1",
+          "Earlier project 2"
+        ]
+      },
+      "iv": [
+        27,
+        28,
+        24,
+        20,
+        15,
+        22
+      ],
+      "n": {
+        "demo": 6,
+        "own": 4,
+        "mates": 7,
+        "kept": 1,
+        "docs": 4
+      },
+      "codeProjects": 6,
+      "typeProjects": {
+        "ml": 4,
+        "backend": 1,
+        "frontend": 1,
+        "design": 0,
+        "mobile": 1,
+        "hardware": 4
+      },
+      "projects": [
+        {
+          "id": "fall-guard",
+          "name": "Fall Guard",
+          "abbr": "Fg",
+          "type": "hardware",
+          "event": "DeltaHacks 11",
+          "desc": "A wearable that detects falls for older adults.",
+          "prize": "Best Hardware Hack",
+          "prizes": [
+            "Best Hardware Hack"
+          ],
+          "kept": false,
+          "share": 69,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        },
+        {
+          "id": "bee-count",
+          "name": "Bee Count",
+          "abbr": "Bc",
+          "type": "ml",
+          "event": "Hack the North 2025",
+          "desc": "Counts pollinators with an on-device vision model.",
+          "prize": "Best Use of Edge AI",
+          "prizes": [
+            "Best Use of Edge AI"
+          ],
+          "kept": false,
+          "share": 61,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        }
+      ]
+    },
+    {
+      "id": "priya",
+      "name": "Priya Nair",
+      "dex": "0099",
+      "types": [
+        "ml"
+      ],
+      "school": {
+        "value": "Western",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "schoolFull": {
+        "value": "Western University",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "program": {
+        "value": "Computer Science",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "grad": {
+        "value": "April 2028",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "year": {
+        "value": 3,
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "city": {
+        "value": "London, ON",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "lastActive": {
+        "value": "2026-10-10T16:00:00.000Z",
+        "source": "GitHub",
+        "looked": [
+          "GitHub"
+        ]
+      },
+      "links": {
+        "devpost": "https://devpost.com",
+        "github": "https://github.com",
+        "linkedin": "https://www.linkedin.com"
+      },
+      "hacks": 4,
+      "wins": 1,
+      "repos": 29,
+      "why": "Computer vision focus. Two hours from Toronto.",
+      "sum": "Careful computer vision work with unusually thorough write-ups.",
+      "ev": {
+        "ml": 230,
+        "backend": 90,
+        "frontend": 40,
+        "design": 20,
+        "mobile": 0,
+        "hardware": 0
+      },
+      "evFrom": {
+        "ml": [
+          "Skin Check",
+          "Shelf Scan",
+          "Earlier project 1",
+          "Earlier project 2"
+        ],
+        "backend": [
+          "Skin Check"
+        ],
+        "frontend": [
+          "Shelf Scan"
+        ],
+        "design": [
+          "Skin Check"
+        ]
+      },
+      "iv": [
+        22,
+        18,
+        23,
+        14,
+        26,
+        31
+      ],
+      "n": {
+        "demo": 3,
+        "own": 3,
+        "mates": 5,
+        "kept": 2,
+        "docs": 4
+      },
+      "codeProjects": 4,
+      "typeProjects": {
+        "ml": 4,
+        "backend": 1,
+        "frontend": 1,
+        "design": 1,
+        "mobile": 0,
+        "hardware": 0
+      },
+      "projects": [
+        {
+          "id": "skin-check",
+          "name": "Skin Check",
+          "abbr": "Sc",
+          "type": "ml",
+          "event": "Hack Western 11",
+          "desc": "Flags skin spots worth a doctor's look.",
+          "prize": "Best Health Hack",
+          "prizes": [
+            "Best Health Hack"
+          ],
+          "kept": true,
+          "share": 74,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        },
+        {
+          "id": "shelf-scan",
+          "name": "Shelf Scan",
+          "abbr": "Ss",
+          "type": "ml",
+          "event": "Hack the North 2024",
+          "desc": "Counts store inventory from a single photo.",
+          "prize": "",
+          "prizes": [],
+          "kept": false,
+          "share": 48,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        }
+      ]
+    },
+    {
+      "id": "ethan",
+      "name": "Ethan Park",
+      "dex": "0154",
+      "types": [
+        "mobile",
+        "ml"
+      ],
+      "school": {
+        "value": "York",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "schoolFull": {
+        "value": "York University",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "program": {
+        "value": "Computer Science",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "grad": {
+        "value": "April 2029",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "year": {
+        "value": 2,
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "city": {
+        "value": "Toronto",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "lastActive": {
+        "value": "2026-10-17T16:00:00.000Z",
+        "source": "GitHub",
+        "looked": [
+          "GitHub"
+        ]
+      },
+      "links": {
+        "devpost": "https://devpost.com",
+        "github": "https://github.com",
+        "linkedin": "https://www.linkedin.com"
+      },
+      "hacks": 8,
+      "wins": 1,
+      "repos": 33,
+      "why": "Strong ML mobile apps, but in 2nd year, not 3rd.",
+      "sum": "A fast mobile builder who has started adding ML to everything he ships.",
+      "ev": {
+        "ml": 120,
+        "backend": 70,
+        "frontend": 90,
+        "design": 0,
+        "mobile": 230,
+        "hardware": 0
+      },
+      "evFrom": {
+        "ml": [
+          "Study Buddy",
+          "Pocket Sommelier"
+        ],
+        "backend": [
+          "Study Buddy"
+        ],
+        "frontend": [
+          "Pocket Sommelier"
+        ],
+        "mobile": [
+          "Study Buddy",
+          "Pocket Sommelier",
+          "Earlier project 1",
+          "Earlier project 2",
+          "Earlier project 3",
+          "Earlier project 4"
+        ]
+      },
+      "iv": [
+        26,
+        14,
+        25,
+        27,
+        17,
+        9
+      ],
+      "n": {
+        "demo": 7,
+        "own": 5,
+        "mates": 11,
+        "kept": 2,
+        "docs": 2
+      },
+      "codeProjects": 8,
+      "typeProjects": {
+        "ml": 3,
+        "backend": 1,
+        "frontend": 1,
+        "design": 0,
+        "mobile": 6,
+        "hardware": 0
+      },
+      "projects": [
+        {
+          "id": "study-buddy",
+          "name": "Study Buddy",
+          "abbr": "Sb",
+          "type": "mobile",
+          "event": "Hack the 6ix 2025",
+          "desc": "Turns lecture audio into flashcards on your phone.",
+          "prize": "Best Use of Speech AI",
+          "prizes": [
+            "Best Use of Speech AI"
+          ],
+          "kept": false,
+          "share": 70,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        },
+        {
+          "id": "pocket-sommelier",
+          "name": "Pocket Sommelier",
+          "abbr": "Ps",
+          "type": "mobile",
+          "event": "UofTHacks 12",
+          "desc": "Point your camera at a menu to get food pairings.",
+          "prize": "",
+          "prizes": [],
+          "kept": false,
+          "share": 64,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        }
+      ]
+    },
+    {
+      "id": "noah",
+      "name": "Noah Tremblay",
+      "dex": "0260",
+      "types": [
+        "design",
+        "frontend"
+      ],
+      "school": {
+        "value": "OCAD U",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "schoolFull": {
+        "value": "OCAD University",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "program": {
+        "value": "Digital Futures",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "grad": {
+        "value": "April 2028",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "year": {
+        "value": 3,
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "city": {
+        "value": "Toronto",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "lastActive": {
+        "value": "2026-10-13T16:00:00.000Z",
+        "source": "GitHub",
+        "looked": [
+          "GitHub"
+        ]
+      },
+      "links": {
+        "devpost": "https://devpost.com",
+        "github": "https://github.com",
+        "linkedin": "https://www.linkedin.com"
+      },
+      "hacks": 5,
+      "wins": 1,
+      "repos": 12,
+      "why": "Designer on three ML-powered hacks.",
+      "sum": "A designer who makes ML features feel friendly and obvious.",
+      "ev": {
+        "ml": 30,
+        "backend": 0,
+        "frontend": 170,
+        "design": 252,
+        "mobile": 30,
+        "hardware": 0
+      },
+      "evFrom": {
+        "ml": [
+          "Echo Notes"
+        ],
+        "frontend": [
+          "Echo Notes",
+          "Calm Commute"
+        ],
+        "design": [
+          "Calm Commute",
+          "Echo Notes",
+          "Earlier project 1",
+          "Earlier project 2",
+          "Earlier project 3"
+        ],
+        "mobile": [
+          "Calm Commute"
+        ]
+      },
+      "iv": [
+        21,
+        15,
+        10,
+        29,
+        13,
+        25
+      ],
+      "n": {
+        "demo": 4,
+        "own": 1,
+        "mates": 13,
+        "kept": 1,
+        "docs": 4
+      },
+      "codeProjects": 5,
+      "typeProjects": {
+        "ml": 1,
+        "backend": 0,
+        "frontend": 2,
+        "design": 5,
+        "mobile": 1,
+        "hardware": 0
+      },
+      "projects": [
+        {
+          "id": "calm-commute",
+          "name": "Calm Commute",
+          "abbr": "Cc",
+          "type": "design",
+          "event": "Hack the 6ix 2025",
+          "desc": "Routes you around the most crowded transit cars.",
+          "prize": "Best UX",
+          "prizes": [
+            "Best UX"
+          ],
+          "kept": false,
+          "share": 38,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        },
+        {
+          "id": "echo-notes",
+          "name": "Echo Notes",
+          "abbr": "En",
+          "type": "frontend",
+          "event": "UofTHacks 12",
+          "desc": "Voice notes that sort themselves by topic.",
+          "prize": "",
+          "prizes": [],
+          "kept": false,
+          "share": 30,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        }
+      ]
+    },
+    {
+      "id": "grace",
+      "name": "Grace Liu",
+      "dex": "0185",
+      "types": [
+        "backend"
+      ],
+      "school": {
+        "value": "UofT",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "schoolFull": {
+        "value": "University of Toronto",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "program": {
+        "value": "Computer Science (graduated)",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "grad": {
+        "value": "June 2026",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "year": {
+        "value": 0,
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "city": {
+        "value": "Toronto",
+        "source": "Devpost",
+        "looked": [
+          "résumé",
+          "People Data Labs",
+          "Devpost"
+        ]
+      },
+      "lastActive": {
+        "value": "2026-10-17T16:00:00.000Z",
+        "source": "GitHub",
+        "looked": [
+          "GitHub"
+        ]
+      },
+      "links": {
+        "devpost": "https://devpost.com",
+        "github": "https://github.com",
+        "linkedin": "https://www.linkedin.com"
+      },
+      "hacks": 10,
+      "wins": 0,
+      "repos": 47,
+      "why": "Deep backend work on ML pipelines. No wins yet.",
+      "sum": "A steady backend engineer behind a lot of other teams' ML pipelines.",
+      "ev": {
+        "ml": 140,
+        "backend": 252,
+        "frontend": 60,
+        "design": 0,
+        "mobile": 0,
+        "hardware": 58
+      },
+      "evFrom": {
+        "ml": [
+          "Data Dock",
+          "Rain Check"
+        ],
+        "backend": [
+          "Data Dock",
+          "Rain Check",
+          "Earlier project 1",
+          "Earlier project 2",
+          "Earlier project 3",
+          "Earlier project 4",
+          "Earlier project 5",
+          "Earlier project 6"
+        ],
+        "frontend": [
+          "Rain Check"
+        ],
+        "hardware": [
+          "Rain Check"
+        ]
+      },
+      "iv": [
+        24,
+        0,
+        26,
+        21,
+        28,
+        27
+      ],
+      "n": {
+        "demo": 8,
+        "own": 6,
+        "mates": 10,
+        "kept": 4,
+        "docs": 8
+      },
+      "codeProjects": 10,
+      "typeProjects": {
+        "ml": 2,
+        "backend": 8,
+        "frontend": 1,
+        "design": 0,
+        "mobile": 0,
+        "hardware": 1
+      },
+      "projects": [
+        {
+          "id": "data-dock",
+          "name": "Data Dock",
+          "abbr": "Dd",
+          "type": "backend",
+          "event": "Hack the North 2025",
+          "desc": "Self-serve data pipelines for student hackathon teams.",
+          "prize": "",
+          "prizes": [],
+          "kept": true,
+          "share": 79,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        },
+        {
+          "id": "rain-check",
+          "name": "Rain Check",
+          "abbr": "Rc",
+          "type": "backend",
+          "event": "Hack the 6ix 2024",
+          "desc": "Flood-risk alerts from city sensor data.",
+          "prize": "",
+          "prizes": [],
+          "kept": true,
+          "share": 68,
+          "url": "https://devpost.com",
+          "repo": null,
+          "demo": true,
+          "flags": [],
+          "inScan": true
+        }
+      ]
+    }
+  ],
+  "demo": {
+    "shortlist": [
+      "arjun",
+      "sofia"
+    ]
+  }
+}
