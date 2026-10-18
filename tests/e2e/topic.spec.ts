@@ -47,7 +47,7 @@ test("a RAG search ranks topic matches first and explains them", async ({ page }
   await page.locator("article h2 button").first().click();
   const why = page.getByRole("heading", { name: /fits your search/ });
   await expect(why).toBeVisible();
-  await expect(page.getByText(/^Built .+, a close match$/)).toBeVisible();
+  await expect(page.getByText(/^Built .+ \(wrote \d+%\)$/)).toBeVisible();
   await page.waitForTimeout(1000);
   await page.mouse.move(0, 0);
   await page.screenshot({ path: `${SHOTS}/screen-2-topic.png`, fullPage: false });

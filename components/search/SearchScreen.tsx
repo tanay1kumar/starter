@@ -25,6 +25,9 @@ const TOO_LONG = "That's over 8,000 characters. Paste just the role description.
 const PARSE_FAILED = "Couldn't read your search. Try again.";
 const OFFLINE = "Couldn't reach Talent Dex. Check your connection and try again.";
 
+/** A parse slower than this shows "Reading your search…"; a cached one never flashes it. */
+const SLOW_MS = 400;
+
 const ARROW = "M5 12h14M13 6l6 6-6 6";
 const ALERT = "M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zM12 8v4.5M12 16h.01";
 const COMMIT = "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM3 12h6M15 12h6";
@@ -63,10 +66,13 @@ export default function SearchScreen() {
   const router = useRouter();
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
+  /** The parse has run past SLOW_MS: only then does the button say so. */
+  const [slow, setSlow] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scan, setScan] = useState<ScanSummary | null>(null);
   /** The parse in flight; also blocks a second "Start scan" while one is running. */
   const request = useRef<AbortController | null>(null);
+  const slowTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // The "Scanning N projects" line. Nothing shows until it loads, or if it fails.
   useEffect(() => {
@@ -91,7 +97,9 @@ export default function SearchScreen() {
     return () => {
       request.current?.abort();
       request.current = null;
+      clearTimeout(slowTimer.current);
       setBusy(false);
+      setSlow(false);
       setError(null);
     };
   }, []);
@@ -112,6 +120,8 @@ export default function SearchScreen() {
     request.current = ctrl;
     setBusy(true);
     setError(null);
+    clearTimeout(slowTimer.current);
+    slowTimer.current = setTimeout(() => setSlow(true), SLOW_MS);
     let message = OFFLINE;
     try {
       const r = await fetch("/api/parse", {
@@ -132,7 +142,9 @@ export default function SearchScreen() {
       if (ctrl.signal.aborted) return;
     }
     request.current = null;
+    clearTimeout(slowTimer.current);
     setBusy(false);
+    setSlow(false);
     setError(message);
   }
 
@@ -290,7 +302,7 @@ export default function SearchScreen() {
                     boxShadow: "0 5px 0 " + accentDark,
                   }}
                 >
-                  {busy ? (
+                  {busy && slow ? (
                     <>
                       <span className="pulse" aria-hidden="true" style={{ width: 10, height: 10, borderRadius: "50%", background: "#FFFFFF" }} />
                       Reading your search…
@@ -304,7 +316,7 @@ export default function SearchScreen() {
                 </button>
               </div>
               <span className="sr-only-td" aria-live="polite">
-                {busy ? "Reading your search…" : ""}
+                {busy && slow ? "Reading your search…" : ""}
               </span>
             </form>
 

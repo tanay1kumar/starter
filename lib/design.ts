@@ -56,6 +56,7 @@ export const ICONS = {
   shieldCheck: "M9 12l2 2 4-4",
   trophy: "M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H5a3 3 0 0 0 3.3 4M16 6h3a3 3 0 0 1-3.3 4M12 13v4M8.5 20h7M10 17h4",
   question: "M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5h.01",
+  alert: "M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zM12 8v4.5M12 16h.01",
 } as const;
 
 export interface StatusStyle {

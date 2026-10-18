@@ -1,6 +1,6 @@
 // Grid mode, below the lid (design markup: <section> after the lid): type tabs, dex cards,
-// skeletons and the empty state. Two additions the design does not have: a "no matches"
-// empty state for searches that find nobody, and "Show more" for long result lists.
+// skeletons and the empty state. Additions the design does not have: "no matches" and
+// "empty shortlist" states, and "Show more" for long result lists.
 
 import type { CSSProperties } from "react";
 import { plural } from "@/lib/format";
@@ -25,11 +25,12 @@ const EMPTY: CSSProperties = {
 
 const CHEVRON_DOWN = "M6 9l6 6 6-6";
 
-export function GridSection({ vm, accent, onPickTab, onToggleStar, onOpen, onShowMore }: GridSectionProps) {
+export function GridSection({ vm, accent, onPickTab, onToggleStar, onOpen, onShowMore, onShowAll }: GridSectionProps) {
   // "Show more" adds one page, so the label promises at most that many.
   const nextPage = Math.min(PAGE_SIZE, vm.moreCount);
+  // <main>, like the Dex entry's: the results are the page's main landmark.
   return (
-    <section style={GRID_SECTION}>
+    <main style={GRID_SECTION}>
       <div role="group" aria-label="Filter by type" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
         {vm.tabs.map((t) => (
           <button
@@ -71,13 +72,42 @@ export function GridSection({ vm, accent, onPickTab, onToggleStar, onOpen, onSho
       </div>
 
       {vm.noneVisible && <div style={EMPTY}>No builders of this type yet. Try another tab!</div>}
-      {vm.noneFound && <div style={EMPTY}>No builders match this search yet. Try removing a filter.</div>}
+      {vm.noneFound && (
+        <div style={EMPTY}>{vm.filters.length ? "No builders match this search yet. Try removing a filter." : "No builders in this scan yet."}</div>
+      )}
+      {vm.shortlistEmpty && (
+        <div style={EMPTY}>
+          No one on your shortlist yet.{" "}
+          <button
+            type="button"
+            className="press press-w"
+            onClick={onShowAll}
+            style={{
+              height: 40,
+              margin: "0 0 0 6px",
+              padding: "0 16px",
+              verticalAlign: "middle",
+              borderRadius: 999,
+              border: 0,
+              background: "#FFFFFF",
+              font: "inherit",
+              fontSize: 15,
+              fontWeight: 700,
+              color: "#2A1715",
+              boxShadow: "0 4px 0 rgba(42,23,21,.18)",
+            }}
+          >
+            Show all builders
+          </button>
+        </div>
+      )}
 
       {vm.moreCount > 0 && (
         <div style={{ display: "flex", justifyContent: "center", marginTop: 32 }}>
           <button
             type="button"
             className="press press-w"
+            data-show-more=""
             onClick={onShowMore}
             style={{
               display: "inline-flex",
@@ -100,6 +130,6 @@ export function GridSection({ vm, accent, onPickTab, onToggleStar, onOpen, onSho
           </button>
         </div>
       )}
-    </section>
+    </main>
   );
 }

@@ -23,6 +23,9 @@ export function DexCard({ card, accent, onToggleStar, onOpen }: DexCardProps) {
   const noRepos = card.repos === null;
   return (
     <article
+      data-id={card.id}
+      // A builder not "found" yet is a placeholder, like the skeletons: nothing to read or press.
+      aria-hidden={card.revealed ? undefined : true}
       className={"dex-card card-in t-" + card.type}
       style={{ position: "relative", background: "#FFFFFF", borderRadius: 30, padding: 10, boxSizing: "border-box", display: "flex", flexDirection: "column", boxShadow: "0 6px 0 rgba(42,23,21,.07)" }}
     >
@@ -54,7 +57,7 @@ export function DexCard({ card, accent, onToggleStar, onOpen }: DexCardProps) {
         )}
         <span style={{ position: "absolute", bottom: 18, width: 64, height: 10, borderRadius: "50%", background: "rgba(42,23,21,.1)" }} />
         <span
-          className={("av sprite " + card.avClass).trim()}
+          className={("av av-hop " + card.avClass).trim()}
           style={{
             position: "relative",
             display: "block",
@@ -129,7 +132,13 @@ export function DexCard({ card, accent, onToggleStar, onOpen }: DexCardProps) {
             <div style={STAT_SEP} title={noRepos ? "No GitHub linked on their Devpost profile" : undefined}>
               {/* "Not listed" sits inside the 20px line so the three cells keep the same height. */}
               <div className="mono" style={STAT_NUM}>
-                {noRepos ? <span style={{ fontSize: 13, color: "#6E5A55", whiteSpace: "nowrap" }}>Not listed</span> : card.repos}
+                {noRepos ? (
+                  <span style={{ fontSize: 13, color: "#6E5A55", whiteSpace: "nowrap" }}>
+                    Not listed<span className="sr-only-td">: no GitHub linked on their Devpost profile</span>
+                  </span>
+                ) : (
+                  card.repos
+                )}
               </div>
               <div style={STAT_LABEL}>Repos</div>
             </div>
@@ -155,6 +164,7 @@ export function DexCard({ card, accent, onToggleStar, onOpen }: DexCardProps) {
 export function SkeletonCard() {
   return (
     <div
+      data-skeleton=""
       aria-hidden="true"
       style={{ background: "#FFFFFF", borderRadius: 30, padding: 10, boxSizing: "border-box", display: "flex", flexDirection: "column", gap: 12, minHeight: 410, boxShadow: "0 6px 0 rgba(42,23,21,.05)" }}
     >

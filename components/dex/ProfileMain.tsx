@@ -9,12 +9,27 @@ import { SignatureProjects } from "./SignatureProjects";
 import { TraitBoard } from "./TraitBoard";
 import { WhyFits } from "./WhyFits";
 
-export function ProfileMain({ p, accent, accentDark, showDraft, copyLabel, copyIcon, onCopy, tab, onTab, radarRef }: ProfileMainProps) {
+export function ProfileMain({
+  p,
+  accent,
+  accentDark,
+  showDraft,
+  copyLabel,
+  copyIcon,
+  copyStatus,
+  onCopy,
+  tab,
+  onTab,
+  radarRef,
+  draftHeadingRef,
+}: ProfileMainProps) {
   return (
     <main
       style={{ maxWidth: 1240, margin: "0 auto", padding: "32px 24px 80px", boxSizing: "border-box", display: "flex", flexDirection: "column", gap: 24 }}
     >
-      {showDraft && <DraftCard p={p} accent={accent} copyLabel={copyLabel} copyIcon={copyIcon} onCopy={onCopy} />}
+      {showDraft && (
+        <DraftCard p={p} accent={accent} copyLabel={copyLabel} copyIcon={copyIcon} copyStatus={copyStatus} onCopy={onCopy} headingRef={draftHeadingRef} />
+      )}
 
       <WhyFits p={p} />
 

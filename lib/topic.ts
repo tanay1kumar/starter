@@ -12,7 +12,7 @@
 import { createHash } from "node:crypto";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import type { TopicHits } from "./scoring";
+import { topicStatus, type TopicHits } from "./scoring";
 
 export interface EmbeddingsFile {
   version: 2;
@@ -46,15 +46,23 @@ async function readData<T>(file: string): Promise<T> {
   return JSON.parse(await readFile(path.join(DATA, file), "utf8")) as T;
 }
 
-/** The embeddings file, parsed and decoded once per version on disk (it is several MB). */
-let loaded: { mtime: number; emb: EmbeddingsFile; vectors: Int8Array[] } | null = null;
+interface Decoded {
+  emb: EmbeddingsFile;
+  vectors: Int8Array[];
+  /** Each int8 vector's length: rounding leaves it slightly off unit length. */
+  norms: Float64Array;
+}
 
-async function embeddings(): Promise<{ emb: EmbeddingsFile; vectors: Int8Array[] }> {
+/** The embeddings file, parsed and decoded once per version on disk (it is several MB). */
+let loaded: ({ mtime: number } & Decoded) | null = null;
+
+async function embeddings(): Promise<Decoded> {
   const file = path.join(DATA, "embeddings.json");
   const mtime = (await stat(file)).mtimeMs;
   if (loaded?.mtime !== mtime) {
     const emb = JSON.parse(await readFile(file, "utf8")) as EmbeddingsFile;
-    loaded = { mtime, emb, vectors: emb.chunks.map((c) => new Int8Array(Buffer.from(c.v, "base64"))) };
+    const vectors = emb.chunks.map((c) => new Int8Array(Buffer.from(c.v, "base64")));
+    loaded = { mtime, emb, vectors, norms: Float64Array.from(vectors, (v) => Math.hypot(...v) || 1) };
   }
   return loaded;
 }
@@ -80,7 +88,13 @@ async function embedLive(q: string, emb: EmbeddingsFile): Promise<number[]> {
   return out.tolist()[0];
 }
 
-/** Best project per builder with its z-score among all projects' best similarities. */
+const LEVEL = { met: 2, close: 1, miss: 0 };
+
+/**
+ * Each builder's best project, with its z-score among all projects' best
+ * similarities: the one that gives them the strongest topic status (a project
+ * they wrote little of counts less, see topicStatus), then the most similar.
+ */
 function hitsFrom(best: Map<string, number>, projects: ProjectsFile): TopicHits {
   const sims = [...best.values()];
   const mean = sims.reduce((a, b) => a + b, 0) / (sims.length || 1);
@@ -90,20 +104,23 @@ function hitsFrom(best: Map<string, number>, projects: ProjectsFile): TopicHits 
     const s = best.get(p.id);
     if (s === undefined) continue;
     for (const b of p.builders) {
+      const hit = { similarity: s, z: (s - mean) / sd, project: p.name, share: b.share };
       const h = hits[b.id];
-      if (!h || s > h.similarity) hits[b.id] = { similarity: s, z: (s - mean) / sd, project: p.name };
+      const d = h ? LEVEL[topicStatus(hit)] - LEVEL[topicStatus(h)] : 1;
+      if (d > 0 || (d === 0 && s > h!.similarity)) hits[b.id] = hit;
     }
   }
   return hits;
 }
 
-function jsonBest(qv: number[], emb: EmbeddingsFile, vectors: Int8Array[]): Map<string, number> {
+/** Cosine similarity of every chunk, exactly as Postgres computes it from the renormalized vectors. */
+function jsonBest(qv: number[], { emb, vectors, norms }: Decoded): Map<string, number> {
   const best = new Map<string, number>();
   emb.chunks.forEach((c, i) => {
     const v = vectors[i];
     let s = 0;
     for (let k = 0; k < v.length; k++) s += v[k] * qv[k];
-    s /= emb.scale;
+    s /= norms[i];
     if (s > (best.get(c.project) ?? -Infinity)) best.set(c.project, s);
   });
   return best;
@@ -129,7 +146,8 @@ async function pgBest(qv: number[]): Promise<Map<string, number>> {
 }
 
 export async function topicHits(query: string): Promise<TopicResult> {
-  const [{ emb, vectors }, projects] = await Promise.all([embeddings(), readData<ProjectsFile>("projects.json")]);
+  const [decoded, projects] = await Promise.all([embeddings(), readData<ProjectsFile>("projects.json")]);
+  const { emb } = decoded;
   const pre = emb.queries[queryKey(query)];
   const qv = pre ? pre.vector : await embedLive(query, emb);
   if (process.env.DATABASE_URL) {
@@ -139,5 +157,5 @@ export async function topicHits(query: string): Promise<TopicResult> {
       // Database unreachable (venue wifi): the same vectors are in the JSON file.
     }
   }
-  return { hits: hitsFrom(jsonBest(qv, emb, vectors), projects), source: "json", cachedQuery: !!pre };
+  return { hits: hitsFrom(jsonBest(qv, decoded), projects), source: "json", cachedQuery: !!pre };
 }

@@ -1,8 +1,13 @@
 // The red lid's header (design markup: <header> at the top of the lid):
 // logo + brand, the "Seen N" pill and the "Shortlist" pill with its count badge.
+// Addition to the design: on the grid the Shortlist pill is a toggle button that
+// shows only the shortlist (yellow while on). On a Dex entry it stays a plain count,
+// so the page has one "Shortlist" button: the one for that builder.
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { ICONS } from "@/lib/design";
+import { plural } from "@/lib/format";
 import type { HeaderProps } from "./contracts";
 import { Icon } from "./primitives";
 
@@ -32,7 +37,41 @@ export function BrandLink({ accent, accentDark }: { accent: string; accentDark: 
   );
 }
 
-export function Header({ accent, accentDark, seenCount, starCount, badgeRef }: HeaderProps) {
+export function Header({ accent, accentDark, seenCount, starCount, badgeRef, shortlistOn, onToggleShortlist }: HeaderProps) {
+  const pill: CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    height: 44,
+    padding: "0 8px 0 16px",
+    borderRadius: 999,
+    background: "#FFFFFF",
+    color: "#2A1715",
+    boxShadow: "0 4px 0 rgba(42,23,21,.18)",
+  };
+  const content = (
+    <>
+      <Icon d={ICONS.star} size={17} fill="#FFCB3D" stroke="#C98F0E" strokeWidth={1.6} linecap={null} />
+      Shortlist
+      <span
+        ref={badgeRef}
+        className="mono"
+        style={{
+          minWidth: 26,
+          height: 26,
+          borderRadius: 999,
+          background: accent,
+          color: "#FFFFFF",
+          fontSize: 12,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {starCount}
+      </span>
+    </>
+  );
   return (
     <header style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap", padding: "20px 32px" }}>
       <BrandLink accent={accent} accentDark={accentDark} />
@@ -41,41 +80,28 @@ export function Header({ accent, accentDark, seenCount, starCount, badgeRef }: H
           <Icon d={ICONS.eye} size={17} strokeWidth={2.2} />
           Seen <span className="mono" style={{ fontWeight: 600 }}>{seenCount}</span>
         </span>
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            height: 44,
-            padding: "0 8px 0 16px",
-            borderRadius: 999,
-            background: "#FFFFFF",
-            fontSize: 15,
-            fontWeight: 700,
-            color: "#2A1715",
-            boxShadow: "0 4px 0 rgba(42,23,21,.18)",
-          }}
-        >
-          <Icon d={ICONS.star} size={17} fill="#FFCB3D" stroke="#C98F0E" strokeWidth={1.6} linecap={null} />
-          Shortlist
-          <span
-            ref={badgeRef}
-            className="mono"
+        {onToggleShortlist ? (
+          <button
+            type="button"
+            className={"press " + (shortlistOn ? "press-y" : "press-w")}
+            aria-pressed={shortlistOn}
+            aria-label={"Shortlist, " + starCount + " " + plural(starCount, "builder")}
+            data-shortlist-toggle=""
+            onClick={onToggleShortlist}
             style={{
-              minWidth: 26,
-              height: 26,
-              borderRadius: 999,
-              background: accent,
-              color: "#FFFFFF",
-              fontSize: 12,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
+              ...pill,
+              border: 0,
+              font: "inherit",
+              fontSize: 15,
+              fontWeight: 700,
+              ...(shortlistOn ? { background: "#FFCB3D", boxShadow: "0 4px 0 #C98F0E" } : {}),
             }}
           >
-            {starCount}
-          </span>
-        </span>
+            {content}
+          </button>
+        ) : (
+          <span style={{ ...pill, fontSize: 15, fontWeight: 700 }}>{content}</span>
+        )}
       </div>
     </header>
   );

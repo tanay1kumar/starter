@@ -113,8 +113,17 @@ Run with `cd pipeline && .venv/bin/python -m talentdex.run` (options: `--portfol
   (171 s vs 38 s on the same repo).
 - **Portfolios.** Each builder's other hackathon projects (from their own Devpost profile, up to
   `--portfolio-cap`, default 30) are attributed the same way, using that event's own window and
-  team. A fast first run with `--portfolio-cap 0 --no-pdl` scored builders on their scanned
-  project only; the committed data says which run made it (`pipeline/cache/steps/run.json`).
+  team. The committed data is the full run: 1,322 projects (215 scanned + 1,107 from portfolios)
+  and 1,241 repos, of which 1,046 were analysed, 102 are gone or private, 17 are over the 300 MB
+  limit, and 76 were never cloned (below). Builders now average 3.4 projects with counted code
+  (249 of 351 have more than one) and 241 EVs, up from 1.1 and 93 on their scanned project alone.
+- **Slow network, `--no-clone`.** The venue network gave about 1.4 MB/s in total, and a VPN's DNS
+  (Tailscale) failed now and then: clones timed out, one run crashed in the words step on a DNS
+  error, and another hung on requests whose route had gone. Fixes: Gemini requests now time out
+  after 90 s and network errors are retried like 5xx (`gemini.py`); `--no-clone` analyses only repos
+  already in the extract cache and skips the rest without remembering the skip, so a later run
+  without it still fetches them. The final run used it: 76 portfolio repos never finished cloning
+  before the deadline, so those projects count as not analysed (no lines, no EVs from them).
 - **Attribution after review.** Two independent reviews of milestone 2's attribution, then a
   verify and repair pass, tightened these rules:
   - A file version that was already credited (same path, same content) earns 0 lines again,
@@ -144,8 +153,9 @@ Run with `cd pipeline && .venv/bin/python -m talentdex.run` (options: `--portfol
   - Known gap: research code copied into a non-library folder (e.g. `ml/MST-plus-plus/` in
     one repo) still counts, since nothing marks it as third-party.
 - **Classification.** Rules first (extension, path, imports, dependencies); Gemini only for files
-  the rules can't place. 10,786 files: 2,644 went to Gemini in 142 batches of up to 30, and
-  10,758 got a type.
+  the rules can't place. On the scanned projects: 10,786 files, 2,644 went to Gemini in 142
+  batches of up to 30, and 10,758 got a type. With portfolios: 28,549 files in 854 repos, 28,488
+  got a type.
   - Gemini sees paths, imports, the first lines of code and the repo's dependency names.
     Team members' names, usernames, emails and URLs are redacted from all of them.
   - Rules: stylesheets are Design, except Tailwind entry files, which are Frontend. A file
@@ -165,9 +175,15 @@ Run with `cd pipeline && .venv/bin/python -m talentdex.run` (options: `--portfol
   plus Gatineau, Quebec City, Halifax, Winnipeg, Victoria, Saskatoon, Regina) and a province per
   city. City matching checks the province, so "London, England" is not London, Ontario.
   Devpost writes some locations as "Toronto, ON, CA"; CA is read as Canada.
-- **Data gaps (quick run, before People Data Labs).** Of 351 builders, 41 list a school and 7 a
-  year of study on Devpost. 266 have a city and 293 a "last active" date (the rest link no
-  GitHub). Everything missing shows "Not listed" with where we looked.
+- **People Data Labs.** 110 builders link a LinkedIn profile on Devpost; lookups go to the most
+  winning, most productive first. The 90-lookup cap is used up and 86 builders matched. The ledger
+  counts a call before it is made, so it includes two that failed on the network and got no answer;
+  the other builders with LinkedIn were never looked up.
+- **Data gaps (final run).** Of 351 builders, 95 have a school (82 from People Data Labs, 13 from
+  Devpost), 64 a year of study (63 from People Data Labs' education dates, 1 from a Devpost
+  tagline), 274 a city (256 Devpost, 18 People Data Labs) and 293 a "last active" date (58 link no
+  GitHub). Everything missing shows "Not listed" with where we looked. Before People Data Labs the
+  numbers were 41 schools and 7 years.
 
 ## Milestone 4 — Search parsing with Gemini, scan replay
 
@@ -238,7 +254,9 @@ Run with `cd pipeline && .venv/bin/python -m talentdex.run` (options: `--portfol
 - **Model.** Snowflake `arctic-embed-m-v1.5` (q8 ONNX, CLS pooling, its query prefix), 768
   dimensions. In a comparison with bge-small, MiniLM and EmbeddingGemma it separated RAG write-ups
   from the rest best. Chunk vectors are stored as int8 (×127, base64); Postgres gets them back as
-  unit-length floats, and both paths agree to two decimals of z.
+  unit-length floats, and the JSON path divides by each int8 vector's length, so both compute the
+  same cosine. On the final data they give the same status, project and ranking for every
+  builder (before that division, rounding flipped 3 borderline *Close* builders).
 - **Why chunks, not one vector per project.** Calibration on the scanned projects showed three
   problems:
   1. One vector per whole write-up put an EV-charging app 4th for "a retrieval-augmented
@@ -256,6 +274,11 @@ Run with `cd pipeline && .venv/bin/python -m talentdex.run` (options: `--portfol
     The floor means a topic nobody built matches nobody.
   - **Result.** "Built a RAG pipeline" puts NexusFolio first (z 4.1; its write-up has an
     "AI-Powered RAG System" section), then DevDoc Agent (z 3.2), then Maatchaa as *Close*.
+  - **On the final data** (839 projects with portfolios, 5,223 chunks) the same thresholds hold:
+    RAG gives 9 *Matches* and 12 *Close*. The top projects are LabelLens (z 4.4, but its builders
+    wrote 5% and 24% of it, so *Close*), NexusFolio, DevDoc Agent, StackSketch, InboxGenius and
+    Protosynthesis. "A game where you play as a goose", embedded live, finds GOOSEAI, GeeseBuds,
+    Goose, HONCK! and Honkanomics.
 - **Exact scoring, no HNSW index.** The z-score needs every project's best similarity, so the
   query scores all chunks (`max(1 - (embedding <=> $1))` grouped by project). That is about
   1,000–8,000 rows and a few milliseconds (19 ms per request locally), so an approximate index
@@ -275,3 +298,133 @@ Run with `cd pipeline && .venv/bin/python -m talentdex.run` (options: `--portfol
 
   It passed against both the JSON fallback and the local Postgres. Screenshots:
   `docs/screenshots/real/screen-1-topic.png`, `screen-2-topic.png`.
+
+## Milestone 6 — Polish
+
+Keyboard and focus, screen readers, reduced motion, the empty, error and loading states, and a
+test that runs the whole demo script. An adversarial review of the result found the problems
+marked "(review)" below; they are fixed. Nothing here changes the data.
+
+- **Focus follows the screen.** Opening or flipping a Dex entry focuses the builder's name (h1, no
+  ring). Closing returns focus to the card that opened it, else the shown builder's card, else
+  (in the shortlist view, after taking the shown builder off) the card next to theirs, else the
+  grid headline.
+- **Escape** closes the innermost thing first: the draft (focus back on "Say hi"), then the Dex
+  entry. Nothing traps focus.
+- **Keys on a Dex entry.** Arrow keys and Escape listen on the document, so they still work after a
+  click on plain text; keys with modifiers (Alt+Left is Back) and typing in fields are ignored.
+- **EVs / IVs** stay toggle buttons with aria-pressed in a labelled group. They were already
+  correct, and a tab list would clash with the arrow keys that flip builders.
+- **A control that disappears hands focus on.**
+  - A removed chip: the next or previous chip, else Restore filters. Restore: the first chip.
+  - Show more: the first new card.
+  - Un-starring in the shortlist view: a neighbour's star, else the header toggle. "Show all
+    builders" in an empty shortlist view: the grid headline.
+  - Try again: back to Try again after another failure. Once it works, the grid headline, for the
+    builders and for the topic check alike (review: focus used to be left on the page body). Only
+    when nothing else took focus while it was loading.
+- **Screen readers.** The scan counter is no longer a live region. A hidden status line on the grid
+  announces the scan start and finish: "Scan started. Checking 214 projects." and "Scan finished:
+  214 projects checked. Found 9 builders.", plus "The project topic couldn't be checked." when it
+  couldn't. It is worded unlike any visible text so existing text locators stay unique. It says
+  "found", like the headline (review: it said "9 builders match" while everyone scored 0).
+- **Reduced motion.** The scan replay still runs, because the counter and card reveals are
+  information; transitions and pop-ins are gone, sparks and the badge pop are skipped, animation
+  delays are zeroed and the scan sweep is hidden. There are no smooth scrolls; all scrolling is
+  instant. Hover and press don't move anything either (review): the card's lift and tilt, button
+  lifts and pushes, project tiles, link pills and the star's spin are off. Their colour and shadow
+  changes stay, so hover still shows.
+- **Loading lines only appear after 0.4 s:** "Loading builders" through CSS, and "Reading your
+  search…" through a timer. When the builders are in and only the topic check is left, the line
+  says "Checking projects for this topic…" (review: it said "Loading builders").
+- **Shortlist view.** On the grid the header Shortlist pill is a toggle button ("Shortlist, N
+  builders") that shows only shortlisted builders; this goes beyond the design, which shows only a
+  count. On a Dex entry it stays a plain count so the hero's "Shortlist" button is the only one
+  with that name. The shortlist view shows every shortlisted builder, in this search or not,
+  ranked against it and never hidden by the replay.
+  - A builder taken off the shortlist from their open Dex entry stays in the view's prev/next until
+    the entry closes, so "k of N", Prev / Next and the arrow keys keep working; after that they
+    leave the view (review: Prev and Next both went dead).
+  - An empty view says "No one on your shortlist yet." with a "Show all builders" button (review:
+    it said "Star a builder", and there are no stars on that screen).
+  - The shortlist count only counts builders that exist in the current dataset.
+  - A Dex entry's back button says "All 1 builder" when the list has one builder, which a
+    one-builder shortlist makes common (review: it said "All 1 builders").
+- **Type tabs.** The picked tab never disappears (review). When a chip change or "Run the scan
+  again" leaves it empty, it stays pressed with its count (0 while empty) and the grid says "No
+  builders of this type yet. Try another tab!"; during a replay it fills in as cards are revealed,
+  with skeletons as on All. It used to vanish, leaving no tab pressed and a blank grid.
+- **Topic check.**
+  - A topic that can't be checked no longer hides everyone in a topic-only search. The scan panel
+    adds "Couldn't check projects for this topic."
+  - Next to it, "Try again" checks only the topic: the builders aren't reloaded and the scan isn't
+    replayed. While it runs, the panel says "Checking projects for this topic…" (review: there was
+    no way to recover). On a phone the button keeps its size, so its label stays on one line, and
+    the status line wraps beside it (review: "Try" and "again" broke onto two lines).
+  - The request gives up after 15 s and falls back to "couldn't check". A topic that wasn't
+    embedded ahead of time loads the local model first, so the limit is generous.
+- **Errors.**
+  - If the builders request fails at the network level, the page says "Couldn't reach Talent Dex.
+    Check your connection and try again." A 200 without builders is an error (it used to load
+    forever).
+  - A server error without a message says "Couldn't load builders. Try again." (review: it showed
+    "Could not load builders (500)."). The status code is only logged, as a console warning, which
+    `next dev` also prints in its terminal. It was a console error, and under `next dev` that put
+    Next's issue badge on the error frame, which opened the code again (review).
+  - When `data/builders.json` is there but can't be read, the page says "Couldn't read the builders
+    data." `/api/builders` and `/api/scan` now log the reason on the server ("data/builders.json is
+    not valid JSON", "… is not a Talent Dex dataset (version 1)"), never the data; `loadDataset`
+    names the file instead of passing on JSON.parse's message, which quotes the file.
+- **Copy email** says "Couldn't copy" when the browser refuses, instead of always "Copied!", with a
+  textarea fallback for plain-http pages. The result is read out.
+- **Empty states.** A builder with no projects shows "No projects to show yet. Looked in Devpost."
+  A search with no filters left and nobody found shows "No builders in this scan yet."
+- **Back to /matches** now continues the scan replay instead of restarting it. Next keeps the page
+  mounted while hidden, so it used to show "N builders found!" and then jump back to "Scouting for
+  you…".
+- **Naming.** The design's avatar class is renamed `.av-hop`, because BUILD.md bans the original
+  word. The banned words appear nowhere in the app or docs; the only hits in `data/` are teams'
+  own Devpost text (SproutTale's description says "sprite accessories"), quoted as written.
+- **Landmarks.** Grid results are a `<main>` landmark. Silhouette cards and project tile art are
+  hidden from screen readers.
+- **Topic credit needs a real share (lead's change, `lib/scoring.ts`).** A strong project match
+  counts as *Matches* only when the builder wrote at least `TOPIC_MIN_SHARE` = 25% of its counted
+  lines; otherwise it is *Close*. Why: on the scan-only data, the #1 card for "Built a RAG
+  pipeline" had written 12% of DevDoc Agent and outranked NexusFolio's 89% author and DevDoc
+  Agent's 88% author.
+  - Row notes: *Matches* "Built <project> (wrote N%)"; *Close* because of a small share "Wrote N%
+    of <project>"; *Close* because the project is only related "<project> is related (wrote N%)";
+    no hit "No project like this yet"; topic not checked "Couldn't check projects for this topic".
+  - `lib/topic.ts` picks, per builder, the project giving the strongest status, then the most
+    similar.
+- **Docs (review).** README: the test notes list every sample-mode skip and `demo.spec.ts`,
+  Troubleshooting quotes what the page and the server log actually say, Setup copies
+  `keys.env.example` with `cp -n` so an existing `keys.env` is kept, and the 3:00 demo line uses
+  the new topic row. `keys.env.example` and `pipeline/talentdex/output.py` no longer mention a
+  Postgres writer in the pipeline: it writes JSON, and `scripts/load-db.mjs` loads Postgres.
+- **Tests.**
+  - `tests/e2e/a11y.spec.ts`: keyboard only from a card to its entry and back, the draft's focus
+    and Escape order, a focus ring on every control of the three screens, focus after removing
+    chips and after Show more, the status line, and reduced motion (no morph, slide, sparks or
+    hover movement; the replay still reveals every card).
+  - `tests/e2e/states.spec.ts`: failures simulated with `page.route`. Builders that fail (network,
+    500 with and without a message, a broken answer) and Try again, focus after it works, slow
+    loads, nobody found, the topic check (failed, slow, Try again failing and, on real data,
+    working), the shortlist view (empty, "Show all builders", un-starring the open builder, "All 1
+    builder"), the picked type tab when Restore filters empties it and as a replay starts, a refused
+    copy, a builder with no projects, missing facts, and screen 0's errors.
+  - The type tab test searches one type that leaves out a whole other type, so Restore filters
+    really empties a tab. The pair comes from the data; when a run has none, `page.route` takes the
+    searched type's code off the fewest builders. It waits for the tab pressed at 0, which the old
+    code never showed (the tab came back only with builders), and counts skeleton cards, not
+    shimmer, which silhouette cards have too. With either old line put back it fails, on both
+    datasets (review: the old test passed with the bug put back).
+  - `tests/e2e/demo.spec.ts` (real data only): the 4-minute demo script in README.md as one test,
+    a step per section: the search, the scan replay (phases in order, silhouettes among revealed
+    cards), the grid (filters, tabs, sort, shortlist), a Dex entry (why-fits rows with sources,
+    EVs), IVs and field notes, the arrow keys, Say hi and copy, a topic search whose top card's
+    row reads "Built <project> (wrote N%)" as *Matches*, and the trust line. It fails if any
+    request leaves the app's server, reads builder names off the page, and saves 18 screenshots to
+    `docs/screenshots/demo/`.
+  - Screenshots use `animations: "disabled"` so they are stable; screen 0 waits for its scan line.
+- Data numbers after the full run are in Milestone 3.

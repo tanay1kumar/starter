@@ -328,3 +328,16 @@ def test_window_for_never_uses_another_event():
     project = {"slug": "plant-hopper", "submissions": [{"hackathon": "Hack the Valley X", "url": "https://hackthevalley-x.devpost.com/"}]}
     with pytest.raises(ValueError, match="no submission to 'UofTHacks 12'"):
         window_for(project, "UofTHacks 12")
+
+
+def test_no_clone_skips_uncached_repos_without_remembering(tmp_path, monkeypatch):
+    monkeypatch.setattr(gitrepo, "GIT_DIR", tmp_path / "git")
+    monkeypatch.setattr(gitrepo, "NO_CLONE", True)
+    monkeypatch.setattr(github, "repo_status", lambda slug: pytest.fail("no network with --no-clone"))
+    cached = {"version": gitrepo.EXTRACT_VERSION, "slug": "o/cached", "head": "abc"}
+    (tmp_path / "git").mkdir()
+    (tmp_path / "git" / "o__cached.json").write_text(json.dumps(cached))
+    assert gitrepo.extract("o/cached") == cached
+    with pytest.raises(RepoSkip) as e:
+        gitrepo.extract("o/new")
+    assert not e.value.retryable and not (tmp_path / "git" / "o__new.json").exists()
