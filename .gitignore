@@ -30,3 +30,6 @@ __pycache__/
 /coverage
 .vercel
 *.pem
+
+# local model cache (transformers.js)
+.cache/

@@ -22,13 +22,14 @@ import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timezone
+from pathlib import Path
 
 from . import code as code_step
 from . import crawl, devpost, github
 from .attribution import Member
 from .config import CACHE_DIR, DATA_DIR
 from .gitrepo import RepoSkip, extract
-from .output import write_json
+from .output import write_json, write_projects
 from .scores import (
     TYPE_KEYS, ProjectView, card_types, dex_numbers, evs, iv_raw, percentile_ivs, project_view, signature, trait_counts,
 )
@@ -392,6 +393,24 @@ def main(argv: list[str] | None = None) -> int:
     }
     save_step("dataset", dataset)  # kept even when validation below fails, for debugging
     write_json(dataset, args.out)
+    # Every project with a builder's counted code, for the topic search (embeddings, Postgres).
+    by_slug: dict[str, list[dict]] = defaultdict(list)
+    view_of: dict[str, ProjectView] = {}
+    for u in sorted(core):
+        for v in views[u]:
+            if v.lines > 0:
+                by_slug[v.slug].append({"id": u, "share": v.share})
+                view_of.setdefault(v.slug, v)
+    write_projects({
+        "version": 1,
+        "generatedAt": dataset["generatedAt"],
+        "projects": [
+            {"id": s, "name": view_of[s].name, "event": view_of[s].event, "tagline": view_of[s].tagline,
+             "builtWith": projects[s].get("built_with") or [], "story": projects[s].get("story") or "",
+             "url": view_of[s].url, "builders": by_slug[s]}
+            for s in sorted(by_slug)
+        ],
+    }, Path(args.out).with_name("projects.json"))
     save_step("run", {
         "at": dataset["generatedAt"], "seconds": round(time.time() - T0), "portfolio_cap": args.portfolio_cap,
         "members": len(members), "builders_with_code": len(builders), "builders": len(core),

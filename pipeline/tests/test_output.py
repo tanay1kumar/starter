@@ -41,3 +41,20 @@ def test_real_data_must_count_its_builders():
         validate(d)
     d["scan"]["buildersFound"] = len(d["builders"])
     validate(d)
+
+
+def test_projects_file_shape():
+    import pytest
+    from talentdex.output import validate_projects
+
+    good = {"version": 1, "projects": [{"id": "plant-hopper", "name": "Plant Hopper", "event": "Hack the Valley X",
+                                        "tagline": "t", "builtWith": ["arduino"], "story": "s",
+                                        "url": "https://devpost.com/software/plant-hopper",
+                                        "builders": [{"id": "pekachoo", "share": 31}]}]}
+    validate_projects(good)
+    dup = {**good, "projects": good["projects"] * 2}
+    with pytest.raises(ValueError):
+        validate_projects(dup)
+    nobody = {**good, "projects": [{**good["projects"][0], "builders": []}]}
+    with pytest.raises(ValueError):
+        validate_projects(nobody)

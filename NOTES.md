@@ -213,3 +213,65 @@ Run with `cd pipeline && .venv/bin/python -m talentdex.run` (options: `--portfol
     falls back to the rules, bad requests get a 400, and the scan carries real totals.
   - `tests/e2e/search.spec.ts`: a chip leads to screen 1 with Gemini's chips, a topic
     survives the URL, and the replay reveals cards as it goes (with `DATA_SOURCE=real`).
+
+## Milestone 5 — Topic search with Postgres + pgvector
+
+- **Blocked on one key: Tiger Data.** `keys.env` has no `DATABASE_URL`, so the Tiger Data
+  database could not be created or loaded from here. Everything for it is built and was run against
+  a local Postgres with pgvector (`pgserver` 0.1.4: Postgres 16, pgvector 0.6). Meanwhile the app
+  falls back to the same vectors in `data/embeddings.json`, which gives the same matches. To switch
+  to Tiger Data:
+  1. Add the service's connection string to `keys.env` as `DATABASE_URL`.
+  2. Run `node scripts/load-db.mjs`.
+  3. Restart the app.
+
+  `/api/topic` then reports `"source": "postgres"`. If the database becomes unreachable during a
+  demo, the route falls back to the JSON file on its own.
+- **Pipeline.**
+  - `talentdex.run` also writes `data/projects.json`: every project a builder has counted code
+    on, with its name, event, tagline, tools, Devpost write-up (split into its sections) and
+    builders.
+  - `node scripts/embed.mjs` embeds them locally with transformers.js into
+    `data/embeddings.json`. No API calls; the model is cached in `.cache/models/`.
+  - `node scripts/load-db.mjs` loads builders, projects, chunks and builder-project links into
+    a `talentdex` schema, replacing it in one transaction.
+- **Model.** Snowflake `arctic-embed-m-v1.5` (q8 ONNX, CLS pooling, its query prefix), 768
+  dimensions. In a comparison with bge-small, MiniLM and EmbeddingGemma it separated RAG write-ups
+  from the rest best. Chunk vectors are stored as int8 (×127, base64); Postgres gets them back as
+  unit-length floats, and both paths agree to two decimals of z.
+- **Why chunks, not one vector per project.** Calibration on the scanned projects showed three
+  problems:
+  1. One vector per whole write-up put an EV-charging app 4th for "a retrieval-augmented
+     generation pipeline". Long hackathon stories all sound alike, and the model reads only
+     512 tokens.
+  2. "What's next" sections matched features teams only planned.
+  3. Similarity scales differ by topic: the median project scores 0.28 for RAG but 0.37 for
+     "a drone or robot that uses computer vision".
+
+  So each project is a summary chunk (name, tagline, tools) plus one chunk per write-up
+  section, skipping inspiration and future-plans sections. A project scores its best chunk.
+  - **Thresholds.** A builder's topic row is *Matches* when their best project stands 2.5
+    standard deviations above all projects for that topic (z) **and** has cosine similarity
+    ≥ 0.36. It is *Close* at z ≥ 2.0 and ≥ 0.32. The z part adapts to broad and narrow topics.
+    The floor means a topic nobody built matches nobody.
+  - **Result.** "Built a RAG pipeline" puts NexusFolio first (z 4.1; its write-up has an
+    "AI-Powered RAG System" section), then DevDoc Agent (z 3.2), then Maatchaa as *Close*.
+- **Exact scoring, no HNSW index.** The z-score needs every project's best similarity, so the
+  query scores all chunks (`max(1 - (embedding <=> $1))` grouped by project). That is about
+  1,000–8,000 rows and a few milliseconds (19 ms per request locally), so an approximate index
+  would only add build time at this size.
+- **Queries.** Every cached search's `topicQuery` is embedded ahead of time, so the demo never
+  loads the model at request time. A new topic (only possible with live Gemini on) is embedded
+  on the server with the same local model (about 0.3 s the first time).
+- **When it can't run.**
+  - The sample data has no project write-ups, so `/api/topic` answers 409 there.
+  - Whenever the topic search fails, the topic row reads "Couldn't check projects for this
+    topic" (*Not listed*) instead of guessing, and the rest of the search still ranks.
+- **Tests.** `tests/e2e/topic.spec.ts` (with `DATA_SOURCE=real`) checks:
+  - The RAG topic has a clear winner (z > 2.5) through the API.
+  - Bad requests get a 400.
+  - A "Built a RAG pipeline" search shows a topic chip and opens a profile whose row reads
+    "Built …, a close match".
+
+  It passed against both the JSON fallback and the local Postgres. Screenshots:
+  `docs/screenshots/real/screen-1-topic.png`, `screen-2-topic.png`.

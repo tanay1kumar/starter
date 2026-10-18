@@ -131,6 +131,9 @@ def project_slug(url: str) -> str:
     return urlparse(url).path.rstrip("/").split("/")[-1]
 
 
+STORY_MAX = 6000  # characters of the write-up kept for the topic search
+
+
 def parse_project(html: str, url: str) -> dict:
     s = soup(html)
     name = text(s.select_one("#app-title"))
@@ -177,6 +180,14 @@ def parse_project(html: str, url: str) -> dict:
     built_with = [text(t) for t in s.select("#built-with .cp-tag")]
     story = s.select_one("#app-details-left")
     story_chars = len(text(story)) if story else 0
+    # The write-up itself: the untitled block between the gallery and "Built With".
+    body = next((d for d in story.find_all("div", recursive=False) if not d.get("id")), None) if story else None
+    sections: list[tuple[str, list[str]]] = [("", [])]
+    for el in body.find_all(recursive=False) if body else ():
+        if el.name in ("h1", "h2", "h3", "h4"):
+            sections.append((text(el), []))
+        elif text(el):
+            sections[-1][1].append(text(el))
     return {
         "slug": project_slug(url),
         "url": url,
@@ -189,6 +200,8 @@ def parse_project(html: str, url: str) -> dict:
         "video": video,
         "built_with": built_with,
         "story_chars": story_chars,
+        # One section per paragraph block: "Heading\ntext", blank line between sections.
+        "story": "\n\n".join(f"{h}\n{' '.join(t)}".strip() for h, t in sections if t)[:STORY_MAX],
     }
 
 
