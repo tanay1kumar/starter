@@ -56,3 +56,30 @@ Decisions, things skipped, and known data gaps, written as the build goes.
   without storage). Sample mode pins "now" to the sample's date so "Last active" reads as designed.
 - **Checks:** `npx playwright test tests/e2e/screens.spec.ts` saves one screenshot per screen to
   `docs/screenshots/`; `design/shots/` has the design file rendered the same way for comparison.
+
+## Milestone 2 — Attribution on PlantHopper
+
+- **Plain `git log` check.** `git log --follow -- '*UniversalControl.ino'` on
+  `jello-2/PlantHopper` shows 21 commits, all by `pekachoo <jliu6162@gmail.com>` (all-time).
+  Hack the Valley X's submission window is Oct 3 2025 8:00pm to Oct 5 10:00am EDT, and all 21
+  commits are inside it (the last is 9:44am on Oct 5), so the window drops none of them. The
+  pipeline gives the file to `pekachoo` at 100% (571 counted lines);
+  `pipeline/tests/test_attribution.py` asserts the share, the 21 commits and the window.
+- **Window source.** The hackathon API only gives days ("Oct 03 - 05, 2025"), so the window comes from
+  the event's `/details/dates` page (`data-iso-date` on the Submissions row, with offsets). If that
+  page is missing, whole days in Toronto time from the API are used and the source is recorded.
+- **Identity mapping order.** (1) the GitHub account GitHub itself links to the commit email (commits
+  API `author.login`) equals the GitHub link on the member's own Devpost profile; (2) a
+  `…@users.noreply.github.com` address names that account; (3) exact email = the public email on
+  that GitHub account; (4) within the team only: same full name, same words in another order, or the
+  git name equals their Devpost/GitHub username. A lone first name ("Alice") is never matched.
+  On PlantHopper all six commit identities map by (1).
+- **What counts as code.** On top of the brief's exclusions, only source-like files count (docs,
+  data and config don't), minified bundles are also caught by content (very long lines), generated
+  files (`*_pb2.py`, `*.g.dart`, Xcode projects) are skipped, and a single file in a single commit
+  counts at most 2,000 lines (a guard against notebooks with outputs and dumped data; capped lines
+  are reported per repo). PlantHopper committed `node_modules` (3.15M lines) and `.next/` build output;
+  both are excluded.
+- **Persistence and docs per repo.** "Kept building" needs a commit after the window that touches
+  counted code (README-only commits don't count). The README author is whoever added the most lines
+  to the root README across all time; it counts toward Documentation when the README is > 300 chars.
