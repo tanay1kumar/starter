@@ -6,8 +6,8 @@ Decisions, things skipped, and known data gaps, written as the build goes.
 
 - **keys.env format.** The file came as label comments followed by bare values, which dotenv
   can't read. It was rewritten in place to `GITHUB_TOKEN=`, `GEMINI_API_KEY=`, `PDL_API_KEY=`
-  (comments kept, values unchanged). `DATABASE_URL` is not set, so the pipeline writes JSON only
-  until it is added (see milestone 5).
+  (comments kept, values unchanged). `DATABASE_URL` was not set at first; it was added
+  later for Tiger Data (see milestone 5).
 - **Design file location.** The approved design was at the repo root under its export name; it was
   moved to `design/talent-dex-v3.html` as the brief expects. `scripts/extract_design.py` writes the
   readable markup and logic to `design/extracted/` (`markup.html`, `component.js`).
@@ -232,17 +232,23 @@ Run with `cd pipeline && .venv/bin/python -m talentdex.run` (options: `--portfol
 
 ## Milestone 5 — Topic search with Postgres + pgvector
 
-- **Blocked on one key: Tiger Data.** `keys.env` has no `DATABASE_URL`, so the Tiger Data
-  database could not be created or loaded from here. Everything for it is built and was run against
-  a local Postgres with pgvector (`pgserver` 0.1.4: Postgres 16, pgvector 0.6). Meanwhile the app
-  falls back to the same vectors in `data/embeddings.json`, which gives the same matches. To switch
-  to Tiger Data:
-  1. Add the service's connection string to `keys.env` as `DATABASE_URL`.
-  2. Run `node scripts/load-db.mjs`.
-  3. Restart the app.
+- **Tiger Data.** `keys.env` had no `DATABASE_URL` at first, so everything was built and run
+  against a local Postgres with pgvector (`pgserver` 0.1.4: Postgres 16, pgvector 0.6), with the
+  app falling back to the same vectors in `data/embeddings.json`. On Oct 18 the final data was
+  loaded into a Tiger Cloud service (Postgres 18.6, pgvector 0.8.7): 351 builders, 839 projects,
+  5,223 chunks and 1,184 builder-project links, in 12 s. Topic searches there give the same status,
+  project and ranking for every builder as the JSON path, in about 65 ms after the first
+  connection. Two fixes were needed:
+  - node-postgres treats `sslmode=require` as full certificate verification, and Tiger's chain isn't
+    in Node's trust store, so the connection string needs `&uselibpqcompat=true` (encrypted, not
+    verified, as with `psql`).
+  - Loading all vectors in one statement ran the service out of memory, so `load-db.mjs` inserts in
+    batches of a few MB.
 
-  `/api/topic` then reports `"source": "postgres"`. If the database becomes unreachable during a
-  demo, the route falls back to the JSON file on its own.
+  To set it up: add the connection string to `keys.env` as `DATABASE_URL`, run
+  `node scripts/load-db.mjs`, and restart the app. `/api/topic` then reports `"source": "postgres"`.
+  If the database becomes unreachable during a demo, the route falls back to the JSON file on its
+  own.
 - **Pipeline.**
   - `talentdex.run` also writes `data/projects.json`: every project a builder has counted code
     on, with its name, event, tagline, tools, Devpost write-up (split into its sections) and
