@@ -123,6 +123,12 @@ export interface ScanSummary {
   commitsCounted: number;
   /** Builders in this dataset (people with verified, attributed code). */
   buildersFound: number;
+  /**
+   * Scanned projects in the order the cached run checked them, with the builders
+   * each one surfaced (first find wins). The scan replay reveals a card when its
+   * project comes up. Absent in the sample.
+   */
+  order?: { id: string; builders: string[] }[];
 }
 
 export interface Dataset {

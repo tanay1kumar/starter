@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-// Milestone 1: one screenshot per screen, saved to docs/screenshots/ for a
-// side-by-side check against design/shots/ (the design file rendered the same way).
+// One screenshot per screen, saved to docs/screenshots/ for a side-by-side check
+// against design/shots/ (the design file rendered the same way). With
+// DATA_SOURCE=real the same run renders data/builders.json into docs/screenshots/real/.
 
-const SHOTS = "docs/screenshots";
+const SHOTS = process.env.DATA_SOURCE === "real" ? "docs/screenshots/real" : "docs/screenshots";
 
 test("screen 0: search", async ({ page }) => {
   await page.goto("/");

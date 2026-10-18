@@ -35,11 +35,12 @@ Decisions, things skipped, and known data gaps, written as the build goes.
   ("6 of 7 projects use PyTorch or TensorFlow") became the counts they describe
   (`codeProjects`, `typeProjects`) and every note is computed by the app.
 - **Scores are computed, not copied.** The design's hand-made scores (96, 91, 88…) are replaced by
-  the brief's formula, so the sample ranks Maya 100, Arjun 87, Priya 82… and three criteria differ
-  from the design's hand labels: Ethan's ML is *Close* (3 of 8 projects is under half) and the
-  notes read as templates ("6 of 7 projects have ML / AI code").
-  Priya's location is *Does not match*: London is about 165 km from Toronto, past the 150 km
-  "Close" radius (the design hand-labelled it "about two hours away").
+  the brief's formula, so the sample ranks Maya 100, Arjun 87, Priya 82, and so on. Two criteria
+  differ from the design's hand labels: Ethan's ML is *Close* (3 of his 8 projects have ML code,
+  which is under half), and Priya's location is *Does not match* (London is about 165 km from
+  Toronto, past the 150 km "Close" radius; the design hand-labelled it "about two hours away").
+  Criterion notes are generated from counts ("6 of 7 projects have ML / AI code") rather than
+  copied from the design's hand-written text.
 - **Criteria rows are dynamic.** The brief allows 1–2 skill types, so "Why X fits" shows one row per
   active criterion and the pill reads "k of N match" (N = 4 for the design's search).
 - **Missing data.** A fifth status, "Not listed", is used when a criterion can't be checked (no year
@@ -83,3 +84,87 @@ Decisions, things skipped, and known data gaps, written as the build goes.
 - **Persistence and docs per repo.** "Kept building" needs a commit after the window that touches
   counted code (README-only commits don't count). The README author is whoever added the most lines
   to the root README across all time; it counts toward Documentation when the README is > 300 chars.
+  (Both rules were tightened in milestone 3; see "Attribution after review" below.)
+
+## Milestone 3 — Full pipeline and real data
+
+Run with `cd pipeline && .venv/bin/python -m talentdex.run` (options: `--portfolio-cap N`,
+`--no-pdl`, `--no-words`, `--workers N`). Every network answer is cached under `pipeline/cache/`
+(gitignored), so a re-run only redoes what changed. Output is `data/builders.json`, checked by
+`talentdex/output.py` against the `lib/types.ts` shape before it is written. `npm run dev:real`
+(or `DATA_SOURCE=real`) shows it; the UI needed no code changes, only the optional
+`scan.order` field below. `docs/screenshots/real/` has the three screens rendered from it.
+
+- **Which hackathons.** BUILD.md's list was searched on Devpost's hackathon API by exact title.
+  Five have public galleries and are scanned: Hack the Valley X, Hack the Valley 9, Hack the 6ix
+  2025, DeltaHacks XI and Hack the North 2025. UofTHacks 12 has no Devpost listing under any
+  spelling we tried, and Hack the Valley 11's gallery is not published yet ("The hackathon
+  managers haven't published this gallery yet"), so both are skipped.
+- **Which projects.** The design's 214 is split evenly: 43 per event (215 in total). Winners
+  come first in gallery order, then the rest; a project is kept only if it links a GitHub repo.
+  Hack the North 2025 had 54 winners, so all 43 of its projects are winners; the other events
+  are a mix. Projects without a repo link (1 to 11 per event) were passed over.
+- **Who is a builder.** A team member on a scanned project with more than 0 counted lines
+  mapped to them, and a public Devpost profile. 642 members → 351 builders. Members with no
+  mapped code are not shown (no invented numbers).
+- **Repos.** 224 repos for 215 projects; 198 analysed, 25 are gone or private, 1 is over the
+  300 MB clone limit. 5,240 commits counted. Clones are full (`--no-checkout`); a partial
+  clone was tried and was slower, because rename detection fetches blobs one at a time
+  (171 s vs 38 s on the same repo).
+- **Portfolios.** Each builder's other hackathon projects (from their own Devpost profile, up to
+  `--portfolio-cap`, default 30) are attributed the same way, using that event's own window and
+  team. A fast first run with `--portfolio-cap 0 --no-pdl` scored builders on their scanned
+  project only; the committed data says which run made it (`pipeline/cache/steps/run.json`).
+- **Attribution after review.** Two independent reviews of milestone 2's attribution, then a
+  verify and repair pass, tightened these rules:
+  - A file version that was already credited (same path, same content) earns 0 lines again,
+    so re-adding a file or reverting doesn't double-count ("replayed" lines are reported).
+  - Identities are per (email, name). An ambiguous first name stays unknown. Names in other
+    scripts are compared after Unicode folding.
+  - The starter-template check follows every commit before the event start through renames,
+    deletes and exact copies.
+  - "Kept building" means added counted lines after the end of the event's last day.
+    Replayed files don't count.
+  - Documentation is credited by `git blame`: more than 300 characters of the current
+    README must be the builder's own.
+  - Notebooks count code cells only.
+  - Repos that fail for temporary reasons (rate limits, 5xx) are retried once and never cached
+    as skipped.
+- **Exclusions found on real data.** Three kinds of committed third-party code were credited to
+  one person until they were excluded:
+  - A Lens Studio project's `Cache/` folder (jasonnpan/ARchemy: 550,925 lines of compiled
+    TypeScript). `Cache/`, `Support/`, `Workspaces/` and `Packages/` next to a `*.esproj` with
+    `Assets/` are now excluded.
+  - Packages installed with `pip install -t` for an AWS Lambda (JaydenYip3/htv_serverless:
+    700,589 lines of twilio, aiohttp…). The files listed in each `*.dist-info/RECORD` are now
+    vendored.
+  - Django `collectstatic` output (ssadras/SafeOStroll). A folder holding Django's
+    `admin/js/core.js` is build output. If that folder is also an app (it holds `.py` files,
+    as in manalafzal47/htv_app), only its `admin/` goes.
+  - Known gap: research code copied into a non-library folder (e.g. `ml/MST-plus-plus/` in
+    one repo) still counts, since nothing marks it as third-party.
+- **Classification.** Rules first (extension, path, imports, dependencies); Gemini only for files
+  the rules can't place. 10,786 files: 2,644 went to Gemini in 142 batches of up to 30, and
+  10,758 got a type.
+  - Gemini sees paths, imports, the first lines of code and the repo's dependency names.
+    Team members' names, usernames, emails and URLs are redacted from all of them.
+  - Rules: stylesheets are Design, except Tailwind entry files, which are Frontend. A file
+    importing an ML library is ML (a Flask route that calls OpenAI is ML). ORM models are
+    Backend. `model/` and `train/` paths count as ML only in repos with other ML signals.
+    pyserial is Hardware; Solidity and Terraform are Backend.
+  - Gemini runs at its default thinking level. Low thinking was 5× faster but put a whole
+    batch on the other side of a close call (28 per-animal modules in an animal-vision
+    project: ML vs Backend), so speed comes from sending a repo's batches in parallel instead.
+- **Numbers.** Card "Hackathons" is the larger of the Devpost profile's count and the distinct
+  events in their analysed projects. Wins are prizes on Devpost. Repos is the public GitHub
+  repo count, "Not listed" without a GitHub link on Devpost (58 builders).
+- **Words.** Gemini wrote every builder's why line and summary (351 of 351) from verified facts
+  only, and every number in a line is checked against those facts before it is used. A template
+  line takes over when Gemini fails twice.
+- **Places.** `data/places.json` gained 28 cities (Thornhill, Aurora, Whitchurch-Stouffville…
+  plus Gatineau, Quebec City, Halifax, Winnipeg, Victoria, Saskatoon, Regina) and a province per
+  city. City matching checks the province, so "London, England" is not London, Ontario.
+  Devpost writes some locations as "Toronto, ON, CA"; CA is read as Canada.
+- **Data gaps (quick run, before People Data Labs).** Of 351 builders, 41 list a school and 7 a
+  year of study on Devpost. 266 have a city and 293 a "last active" date (the rest link no
+  GitHub). Everything missing shows "Not listed" with where we looked.
