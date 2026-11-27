@@ -22,7 +22,7 @@
 
 The people in these screenshots are made up.
 
-## How we know who wrote what (technical)
+## How we know who wrote what
 
 Devpost lists who was on a team but not what each person did. A Python pipeline clones each project's repo and uses `git log --numstat` to count the lines every teammate added during the hackathon. Lockfiles, build output, vendored code and generated files don't count. Commits are matched to teammates through the GitHub account on their own Devpost profile, or by name within that team. Anyone we can't match stays unknown.
 
