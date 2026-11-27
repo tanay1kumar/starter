@@ -1,4 +1,4 @@
-"""Score math, exactly as BUILD.md defines it."""
+"""Score math."""
 
 from talentdex.scores import (
     ProjectView, card_types, dex_numbers, evs, iv_raw, percentile_ivs, project_view, signature, trait_counts,

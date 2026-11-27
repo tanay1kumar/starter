@@ -1,11 +1,11 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
-// Milestone 5: the topic search. "Built a RAG pipeline" is matched against every
+// The topic search. "Built a RAG pipeline" is matched against every
 // builder's project write-ups (Postgres + pgvector with DATABASE_URL, else the
 // same vectors in data/embeddings.json). Needs DATA_SOURCE=real.
 
-const SHOTS = "docs/screenshots/real";
+const SHOTS = "test-results";
 const searches = JSON.parse(readFileSync("data/searches.json", "utf8")) as {
   entries: Record<string, { text: string; criteria: { topic: string | null; topicQuery: string | null } }>;
 };

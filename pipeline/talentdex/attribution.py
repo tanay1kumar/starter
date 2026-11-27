@@ -1,6 +1,6 @@
 """Who wrote what, from a cached git extract (format v3, see gitrepo.py).
 
-Rules (BUILD.md, "Attribution"):
+Rules:
 - A commit counts only if its author time is inside the hackathon window
   [start, end], compared as instants (git's %at), so odd offsets can't break it.
 - Excluded: build output, lockfiles, node_modules, vendored code, binaries,

@@ -1,9 +1,9 @@
 """Step 7 (words): Gemini writes each builder's "why" line and Dex summary.
 
-    python -m talentdex.words                      # design samples: new lines next to the design's
+    python -m talentdex.words                      # sample data: new lines next to the existing ones
     python -m talentdex.words ../data/builders.json --limit 20
 
-BUILD.md "Words": Gemini (Flash) writes the card's "why" line (<= 15 words) and
+Gemini (Flash) writes the card's "why" line (<= 15 words) and
 the Dex entry summary (<= 20 words) from a JSON of that builder's verified
 facts only: card numbers, EVs, trait counts, and signature projects with their
 names, prizes and the share of code the builder wrote. Rules implemented here:
@@ -423,7 +423,7 @@ def write_words(builders: list[dict], *, workers: int = 4) -> dict[str, dict]:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("dataset", nargs="?", default=str(DATA_DIR / "sample.json"), help="a Dataset JSON (default: the design samples)")
+    ap.add_argument("dataset", nargs="?", default=str(DATA_DIR / "sample.json"), help="a Dataset JSON (default: the sample data)")
     ap.add_argument("--limit", type=int, default=0, help="only the first N builders")
     ap.add_argument("--json", action="store_true", help="print the results as JSON")
     args = ap.parse_args(argv)

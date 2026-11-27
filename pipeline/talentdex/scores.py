@@ -1,6 +1,6 @@
 """Step 6 (scores): turn per-project evidence into the numbers on screen.
 
-Exactly BUILD.md "How every number is computed":
+How every number is computed:
   EV_t   = min(252, round(510 * maturity * share_t)),
            share_t = builder's counted lines in type t / all their counted lines,
            maturity = min(1, projects with counted code / 6)

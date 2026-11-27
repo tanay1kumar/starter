@@ -1,5 +1,4 @@
 // Screen 2 (Dex entry), inside the red lid: back, prev/next and the hero card.
-// Ported from design/extracted/markup.html, `profileMode` block (lines 162-242).
 
 import { ICONS } from "@/lib/design";
 import type { ProfileHeroProps } from "./contracts";

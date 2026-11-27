@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// Milestone 4: screen 0 to screen 1 through the cached Gemini parse, and the scan
+// Screen 0 to screen 1 through the cached Gemini parse, and the scan
 // replay. Runs on either dataset; the replay test needs DATA_SOURCE=real.
 
 test("an example chip searches with Gemini's cached criteria", async ({ page }) => {

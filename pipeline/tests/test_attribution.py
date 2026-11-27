@@ -476,30 +476,3 @@ def test_kept_building_rules(tmp_path):
     assert r["kept"] == [] and r["window"]["kept_after"] == "2025-10-05T23:59:59-04:00"
     # ...unless the caller says the event ended at the deadline. Unknown authors never count.
     assert attribute(ex, START, END, TEAM3, {c["sha"]: LOGINS.get(c["ae"]) for c in ex["commits"]}, kept_after=END)["kept"] == ["ben"]
-
-
-PLANTWATERER_FILE = "Arduino_Files/UniversalControl/UniversalControl.ino"
-
-
-def test_plantwaterer_universalcontrol_is_all_octo-dev():
-    """Hack the Valley X, 1st place. GitHub user octo-dev wrote every line of
-    UniversalControl.ino: 21 of 21 commits all-time, and all 21 fall inside the
-    submission window (Oct 3 8:00pm to Oct 5 10:00am EDT), so nothing is lost
-    to the window."""
-    from talentdex.analyze import analyze_project
-    from talentdex.devpost import window_bounds
-    from talentdex.gitrepo import extract
-
-    out = analyze_project("plant-waterer", "Hack the Valley X")
-    assert out["window"]["source"] == "devpost:details/dates"
-    r = out["repos"]["octo-team/PlantWaterer"]
-
-    assert file_share(r, PLANTWATERER_FILE) == {"octo-dev": 1.0}
-    assert r["identities"]["octo@example.com"]["member"] == "octo-dev"
-
-    ex = extract("octo-team/PlantWaterer")
-    touching = [c for c in ex["commits"] if any(PLANTWATERER_FILE in (f[0], f[3]) for f in c["files"])]
-    assert len(touching) == 21
-    assert {c["an"] for c in touching} == {"octo-dev"}
-    start, end = window_bounds(out["window"])
-    assert all(start.timestamp() <= c["at"] <= end.timestamp() for c in touching)

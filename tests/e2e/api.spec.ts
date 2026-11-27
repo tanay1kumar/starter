@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
-// Milestone 4: search parsing. The demo's searches are answered from the cached
+// Search parsing. The demo's searches are answered from the cached
 // Gemini parses in data/searches.json; anything else falls back to the keyword
 // rules, because the test server never has ALLOW_LIVE_GEMINI=1.
 

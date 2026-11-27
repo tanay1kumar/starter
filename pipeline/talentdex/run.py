@@ -4,7 +4,7 @@
     .venv/bin/python -m talentdex.run --portfolio-cap 0           # scanned projects only (fast)
     .venv/bin/python -m talentdex.run --no-words                  # template lines instead of Gemini
 
-Steps (BUILD.md "Data pipeline"): 1 hackathons, 2 projects, 3 people,
+Steps: 1 hackathons, 2 projects, 3 people,
 4 code (clone, attribute, classify), 5 enrichment, 6 scores, 7 words,
 8 output. Every network answer is cached, so a re-run is free.
 

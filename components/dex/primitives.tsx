@@ -17,7 +17,7 @@ interface IconProps {
   label?: string;
 }
 
-/** A 24x24 stroked path icon, as used throughout the design file. */
+/** A 24x24 stroked path icon, used throughout the app. */
 export function Icon({ d, size, stroke = "currentColor", strokeWidth = 2.2, fill = "none", linecap = "round", linejoin = "round", style, label }: IconProps) {
   const a11y = label ? { role: "img" as const, "aria-label": label } : { "aria-hidden": true as const };
   return (

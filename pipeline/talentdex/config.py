@@ -25,7 +25,7 @@ GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
 
 USER_AGENT = "TalentDex/1.0 (hackathon recruiting research; contact via devpost)"
 
-# Repos bigger than this are not cloned (BUILD.md: skip repos over 300 MB).
+# Repos bigger than this are not cloned.
 MAX_REPO_KB = 300 * 1024
 
 # Hackathon windows are in the organisers' local time when Devpost only gives days.

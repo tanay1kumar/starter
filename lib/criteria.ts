@@ -5,7 +5,7 @@ import { ICONS, TYPES } from "./design";
 import { yearLabel } from "./format";
 import { TYPE_KEYS, type Criteria, type TypeKey } from "./types";
 
-/** The search shown in the design file. */
+/** The default search. */
 export const DEFAULT_CRITERIA: Criteria = {
   types: ["ml"],
   year: 3,
@@ -28,7 +28,7 @@ export function encodeCriteria(c: Criteria): string {
   return p.toString();
 }
 
-/** Missing params mean "no search given": fall back to the design's search. */
+/** Missing params mean "no search given": fall back to the default search. */
 export function decodeCriteria(p: URLSearchParams | null): Criteria {
   if (!p || ![...p.keys()].some((k) => ["types", "year", "loc", "win", "topic", "tq", "q"].includes(k))) {
     return { ...DEFAULT_CRITERIA };
@@ -61,7 +61,7 @@ export interface FilterChip {
 
 const PLAIN: CSSProperties = { background: "#FFFFFF", color: "#2A1715" };
 
-/** Chips in the design's order: type(s), year, location, winner, then topic. */
+/** Chips in order: type(s), year, location, winner, then topic. */
 export function criteriaChips(c: Criteria): FilterChip[] {
   const chips: FilterChip[] = c.types.map((t) => ({
     id: "type:" + t,

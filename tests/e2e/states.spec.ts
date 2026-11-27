@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
-// Milestone 6: empty, error and loading states. Failures are simulated with
+// Empty, error and loading states. Failures are simulated with
 // page.route, so this runs on either dataset (one topic test needs DATA_SOURCE=real).
 
 async function scanDone(page: Page) {

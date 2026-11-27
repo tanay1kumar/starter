@@ -1,5 +1,4 @@
-// Props for the screen 1 / screen 2 components. DexApp (the state machine,
-// ported from the design's Component class) owns all state and passes view
+// Props for the screen 1 / screen 2 components. DexApp (the state machine) owns all state and passes view
 // models from lib/viewmodel.ts plus callbacks. Components never hold app state.
 
 import type { MouseEvent, Ref } from "react";

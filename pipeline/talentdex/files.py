@@ -1,6 +1,6 @@
 """Which files count as code, and why a file is excluded.
 
-BUILD.md excludes build output (.next/ dist/ build/ out/ __pycache__/ *.pyc),
+Excluded: build output (.next/ dist/ build/ out/ __pycache__/ *.pyc),
 lockfiles, node_modules/, vendored code, binaries, minified files, and starter
 template files (handled in attribution.py). How that is decided here:
 
@@ -145,7 +145,7 @@ CODE_EXTS = {
 CODE_FILENAMES = {"Makefile", "CMakeLists.txt", "Procfile"}
 DOCKERFILE = re.compile(r"^(?!.*\.dockerignore$)((docker|container)file([.-][\w.-]+)?|[\w.-]+\.(docker|container)file)$", re.I)
 BIN_WWW = re.compile(r"(^|/)bin/www$")
-# Design tokens are Design work (BUILD.md); other JSON is data or config.
+# Design tokens are Design work; other JSON is data or config.
 TOKENS_JSON = re.compile(r"(^|/)(tokens|[^/]*\.tokens|design-tokens[^/]*|figma[^/]*tokens[^/]*)\.json$"
                          r"|(^|/)tokens/(.*/)?(?!package\.json$|tsconfig)[^/]+\.json$", re.I)
 
@@ -437,7 +437,7 @@ def looks_minified(facts: dict, path: str = "") -> bool:
     Long code-like lines must dominate the lines or the text (a bundle under a licence
     header): inline images, base64 fonts and long prompt strings in a hand-written file
     are not minification. Notebooks (an output image is one long line) and SVG exports
-    (one long line per path; Design work in BUILD.md) never are.
+    (one long line per path; Design work) never are.
     """
     if not facts or path.lower().endswith((".ipynb", ".svg")):
         return False

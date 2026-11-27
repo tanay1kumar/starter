@@ -1,4 +1,4 @@
-// Topic search (milestone 5): which builders have a project like the searched one.
+// Topic search: which builders have a project like the searched one.
 // Server only.
 //
 // Every project is a few chunks (summary + write-up sections, see scripts/embed.mjs).

@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// Milestone 6: keyboard, focus and reduced motion. Runs on either dataset.
+// Keyboard, focus and reduced motion. Runs on either dataset.
 
 async function scanDone(page: Page) {
   await page.goto("/matches");

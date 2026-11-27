@@ -19,7 +19,7 @@
   --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
 }
 
-/* ---- From design/talent-dex-v3.html (<helmet><style>), font stacks mapped to next/font ---- */
+/* ---- Base styles, font stacks mapped to next/font ---- */
 body{margin:0;background:#FFF6EE;color:#2A1715;font-family:var(--font-nunito),'Nunito',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:#2A1715}a:hover{color:#B8261C}
 .display{font-family:var(--font-fredoka),'Fredoka','Nunito',sans-serif;letter-spacing:-0.01em}
@@ -80,14 +80,13 @@ a{color:#2A1715}a:hover{color:#B8261C}
 .pill-link{transition:transform .12s ease}
 .pill-link:hover{transform:translateY(-2px);color:#2A1715!important}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
-/* ---- end of design styles ---- */
-/* Changed from the design file: its avatar class is renamed .av-hop (BUILD.md bans the word). */
+/* ---- end of base styles ---- */
 
 /* Headings and the hero are focused by script when the screen changes (tabIndex -1).
    They are not controls, so no ring; every control keeps the :focus-visible ring above. */
 [tabindex="-1"]:focus{outline:none}
 
-/* Reduced motion, on top of the design's rule above: no animation delays either, so
+/* Reduced motion, on top of the rule above: no animation delays either, so
    content appears at once rather than after a hidden pause, and the scan's decorative
    sweep is hidden (stopped, it would sit as a stray glow in the panel). */
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-delay:0s!important;transition-delay:0s!important}.sweep{display:none}}
@@ -101,7 +100,7 @@ a{color:#2A1715}a:hover{color:#B8261C}
 @keyframes after-wait{from,to{visibility:hidden}}
 @media (prefers-reduced-motion: reduce){.after-wait{animation-delay:.4s!important}}
 
-/* SVG <text> in the design names families directly ("Geist Mono, monospace");
+/* SVG <text> names families directly ("Geist Mono, monospace");
    next/font renames families, so SVG text uses these classes instead. */
 .svg-mono{font-family:var(--font-geist-mono),'Geist Mono',ui-monospace,monospace}
 .svg-body{font-family:var(--font-nunito),'Nunito',system-ui,sans-serif}

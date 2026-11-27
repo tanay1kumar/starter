@@ -1,7 +1,6 @@
 // Dex entry: signature projects (tile, prize, name, description, event,
 // "Kept building", "{first} wrote N%").
-// Ported from design/extracted/markup.html (lines 514-546). Additions: the
-// project name links to its Devpost page (evidence for every claim),
+// The project name links to its Devpost page (evidence for every claim),
 // attribution caveat flags show as pills next to the share, and a builder
 // with no projects gets a plain empty state instead of an empty grid.
 

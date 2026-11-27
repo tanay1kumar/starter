@@ -100,7 +100,7 @@ def validate(dataset: dict) -> None:
     for k in ("projectsChecked", "reposChecked", "commitsCounted", "buildersFound"):
         if not isinstance(scan.get(k), int):
             problems.append(f"scan.{k}")
-    # The sample keeps the design's population (214); real data must count what it ships.
+    # The sample keeps a population of 214; real data must count what it ships.
     if dataset.get("source") == "real" and scan.get("buildersFound") != len(dataset.get("builders") or []):
         problems.append("scan.buildersFound != len(builders)")
     ids = [b.get("id") for b in dataset.get("builders") or []]

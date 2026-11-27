@@ -1,5 +1,4 @@
-// Design tokens and helpers ported 1:1 from design/talent-dex-v3.html
-// (the `Component extends DCLogic` class: types(), judge(), avatar(), shade()).
+// Design tokens and helpers: types, judge(), avatar() and shade().
 
 import type { CSSProperties } from "react";
 import type { CritStatus, TypeKey } from "./types";
@@ -70,7 +69,7 @@ export const STATUS: Record<CritStatus, StatusStyle> = {
   met: { bg: "#DDF5EA", fg: "#1A6B4A", icon: "M5 12.5l4.5 4.5L19 7.5", status: "Matches" },
   close: { bg: "#FFF3C4", fg: "#7A5D00", icon: "M5 13c2-3 4-3 7 0s5 3 7 0", status: "Close" },
   miss: { bg: "#F3E6DA", fg: "#6E5A55", icon: "M7 7l10 10M17 7L7 17", status: "Does not match" },
-  // Not in the design: the brief requires missing data to read "Not listed".
+  // Missing data reads "Not listed".
   unknown: { bg: "#F3E6DA", fg: "#6E5A55", icon: ICONS.question, status: "Not listed" },
 };
 

@@ -1,7 +1,6 @@
 // Dex entry: field notes (school, program, graduating, last active), profile
 // links and the identity verify line.
-// Ported from design/extracted/markup.html (lines 494-511). Additions from the
-// brief: a missing fact reads "Not listed" plus where we looked, and a link that
+// A missing fact reads "Not listed" plus where we looked, and a link that
 // is not on the builder's own Devpost profile reads "Not linked on Devpost".
 
 import { Fragment, type CSSProperties } from "react";

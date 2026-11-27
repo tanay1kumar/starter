@@ -1,6 +1,5 @@
 // Dex entry: the trait board with its two views, "Effort" (hexagon radar + rows)
 // and "Traits" (nature + six tiles).
-// Ported from design/extracted/markup.html (lines 401-492).
 
 import { Fragment, type CSSProperties, type Ref } from "react";
 import { ICONS, TYPES } from "@/lib/design";

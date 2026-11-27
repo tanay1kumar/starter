@@ -1,4 +1,4 @@
-"""Areas (BUILD.md): put every counted file into one of six types.
+"""Areas: put every counted file into one of six types.
 
 Rules first, from the path, the extension, the file's imports and the
 project's manifests; Gemini only for leftovers, in batches of up to 30 files
@@ -7,7 +7,7 @@ per file, its path, language, imports and first lines, with emails, URLs,
 @handles, team names and credit lines redacted: never names, schools or
 photos. A file nothing can place stays unclassified; nothing defaults.
 
-Decisions on top of the brief:
+Decisions:
 - ML imports win over everything (a Flask route calling OpenAI is ML / AI).
 - ORM and schema models are Backend, even under models/.
 - Stylesheets are Design ("style-only files"); a Tailwind entry stylesheet

@@ -305,32 +305,3 @@ def test_save_and_load_targets(steps):
     assert path == crawl.TARGETS_JSON
     assert crawl.load_targets() == {"hackathons": [{"name": "H", "url": "https://h.devpost.com/"}],
                                     "projects": {"https://h.devpost.com/": ["a"]}, "quota": 1}
-
-
-# ------------------------------------------------ real data (cached responses)
-
-def test_hack_the_valley_x_resolves_with_exact_window_and_public_gallery(steps):
-    [h] = crawl.resolve_targets(["Hack the Valley X"])
-    assert h["id"] == 25485 and h["url"] == "https://hack-the-valley-x.devpost.com/"
-    assert h["window"] == WIN
-    assert h["gallery_public"] is True and h["gallery_total"] == 124
-
-
-def test_hack_the_valley_x_gallery_is_winners_first():
-    h = {"url": "https://hack-the-valley-x.devpost.com/", "gallery_url": "https://hack-the-valley-x.devpost.com/project-gallery",
-         "open_state": "ended"}
-    items = crawl.gallery_items(h)
-    assert len(items) == 124 and len({i["slug"] for i in items}) == 124
-    assert items[0]["slug"] == "plant-waterer"
-    flags = [i["winner"] for i in items]
-    assert sum(flags) == 20 and flags == sorted(flags, reverse=True)
-
-
-def test_plant_hopper_team_and_window_from_devpost(steps):
-    p = devpost.fetch_project("plant-waterer")
-    assert crawl.submission_window(p["submissions"][0]) == {**WIN, "hackathon": "Hack the Valley X",
-                                                           "url": "https://hack-the-valley-x.devpost.com/"}
-    people = crawl.load_people(["jane-roe"])
-    assert people["jane-roe"]["profile"]["github"] == "jane-roe"
-    assert "Hack the Valley X" in people["jane-roe"]["challenges"]
-    assert "plant-waterer" in crawl.portfolio_slugs(people["jane-roe"]["profile"])

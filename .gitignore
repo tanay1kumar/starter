@@ -3,6 +3,11 @@ keys.env
 .env*
 !keys.env.example
 
+# real pipeline output (holds people's data, never commit)
+data/builders.json
+data/projects.json
+data/embeddings.json
+
 # node / next
 node_modules/
 .next/

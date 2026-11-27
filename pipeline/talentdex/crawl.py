@@ -1,6 +1,6 @@
 """Choose what to scan: target hackathons, their galleries, demos, people, windows.
 
-BUILD.md "Data pipeline" steps 1-3. Rules implemented here:
+Pipeline steps 1-3. Rules implemented here:
 - Hackathons come from Devpost's hackathon search API (paginated) and must match
   the asked-for title exactly after normalisation ("DeltaHacks 11" = "DeltaHacks XI").
   No fuzzy picks: an event that isn't there is reported as not found, with the
@@ -55,7 +55,7 @@ from .config import CACHE_DIR
 TARGETS = ["Hack the Valley X", "Hack the Valley 9", "Hack the 6ix 2025", "UofTHacks 12", "DeltaHacks 11",
            "Hack the North 2025", "Hack the Valley 11"]
 
-# The design's "214 projects": split evenly across the events we can scan.
+# 214 projects, split evenly across the events we can scan.
 TOTAL_PROJECTS = 214
 
 STEPS_DIR = CACHE_DIR / "steps"

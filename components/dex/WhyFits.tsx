@@ -1,5 +1,4 @@
 // Dex entry: "Why {first} fits your search", one row per search criterion (0-6 rows).
-// Ported from design/extracted/markup.html (lines 379-398).
 
 import type { ProfileVM } from "@/lib/viewmodel";
 import { Icon } from "./primitives";

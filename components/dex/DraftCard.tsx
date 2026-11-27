@@ -1,5 +1,5 @@
 // Dex entry: "Say hi to {first}" outreach draft with a copy button.
-// Ported from design/extracted/markup.html (lines 360-377). Not modal: "Say hi" moves
+// Not modal: "Say hi" moves
 // focus to the heading, Tab carries on to the rest of the page, Escape closes it.
 
 import type { Ref } from "react";

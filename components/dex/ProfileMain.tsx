@@ -1,6 +1,5 @@
 // Screen 2 (Dex entry), below the red lid: outreach draft, why-fits, trait
 // board, field notes and signature projects.
-// Ported from design/extracted/markup.html, `profileMode` <main> (lines 357-548).
 
 import type { ProfileMainProps } from "./contracts";
 import { DraftCard } from "./DraftCard";

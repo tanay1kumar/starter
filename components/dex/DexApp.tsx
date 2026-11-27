@@ -1,7 +1,6 @@
 "use client";
 
-// Screens 1 and 2. A port of the design file's `Component extends DCLogic`:
-// the same state, timers, FLIP morph, slide on prev/next, shortlist burst,
+// Screens 1 and 2: state, timers, FLIP morph, slide on prev/next, shortlist burst,
 // copy-to-clipboard and keyboard handling. All derived values come from
 // lib/viewmodel.ts; the components under components/dex only render them.
 //

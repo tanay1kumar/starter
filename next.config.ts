@@ -8,7 +8,9 @@ loadEnv({ path: "keys.env", quiet: true });
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
-  // Keep the dev-tools bubble out of demo screenshots.
+  // Stop `next dev` writing its own AGENTS.md into the repo.
+  agentRules: false,
+  // Keep the dev-tools bubble out of screenshots.
   devIndicators: false,
   turbopack: {
     rules: {

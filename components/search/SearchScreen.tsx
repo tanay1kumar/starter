@@ -1,6 +1,6 @@
 "use client";
 
-// Screen 0, search. Not in the design file; built in its style: the red lid
+// Screen 0, search: the red lid
 // with the brand, a big white card holding the search box, example chips and
 // "Start scan", then three cards on what the scan does. "Start scan" asks
 // /api/parse for criteria and opens /matches with them in the URL.
@@ -108,7 +108,7 @@ export default function SearchScreen() {
     if (request.current) return;
     const query = text.trim();
     if (!query) {
-      // No search given: /matches without params runs the design's default search (DEFAULT_CRITERIA).
+      // No search given: /matches without params runs the default search (DEFAULT_CRITERIA).
       router.push("/matches");
       return;
     }

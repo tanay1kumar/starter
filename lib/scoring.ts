@@ -1,4 +1,4 @@
-// Criteria checks and the match score, exactly as defined in BUILD.md:
+// Criteria checks and the match score:
 //   score = 100 * (0.6 * criteria + 0.4 * skill_fit)
 //   criteria  = average over criteria rows (Matches 1, Close 0.5, otherwise 0)
 //   skill_fit = mean over searched types of EV_t / 252
@@ -33,7 +33,7 @@ export type TopicHits = Record<string, TopicHit>;
 /**
  * A topic match needs both: to stand out from the other projects (z), and to be
  * similar in absolute terms, so a topic no one built matches no one.
- * Calibrated on the real projects; see NOTES.md (milestone 5).
+ * Calibrated on the real projects.
  */
 export const TOPIC_MET = { z: 2.5, similarity: 0.36 };
 export const TOPIC_CLOSE = { z: 2.0, similarity: 0.32 };

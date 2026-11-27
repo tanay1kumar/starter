@@ -137,7 +137,7 @@ export interface Dataset {
   generatedAt: string;
   scan: ScanSummary;
   builders: Builder[];
-  /** Sample-only UI state from the design file (pre-shortlisted builders). */
+  /** Sample-only UI state (pre-shortlisted builders). */
   demo?: { shortlist: string[] };
 }
 

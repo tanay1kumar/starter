@@ -1,5 +1,4 @@
-// View models for screens 1 and 2: a TypeScript port of the design file's
-// renderVals() and profile(). Components only render what these return.
+// View models for screens 1 and 2. Components only render what these return.
 
 import type { CSSProperties } from "react";
 import { criteriaChips, type FilterChip } from "./criteria";
@@ -343,7 +342,7 @@ export function deriveGrid(s: DexState, ctx: Ctx): Derived {
   // Silhouettes appear in rank order (design timing); each is revealed once the
   // replay reaches the project where the cached run found that builder.
   const shownList = ranked.filter((_, i) => tick >= appearAt(i));
-  // The shortlist view (header button, not in the design): everyone shortlisted, in
+  // The shortlist view (header button): everyone shortlisted, in
   // this search's results or not, ranked against this search. They are the recruiter's
   // own picks, so the replay doesn't hide them. A builder taken off from their open Dex
   // entry stays in it until the entry closes, so its place and prev/next keep working.
@@ -525,7 +524,7 @@ export function deriveProfile(s: DexState, ctx: Ctx, id: string, e: Evaluation, 
     src: listNames(c.evFrom[k]) || "earlier projects",
   }));
 
-  // IV tiles with the design's evidence sentences.
+  // IV tiles with their evidence sentences.
   const ev = [
     c.n.demo + " of " + c.hacks + " projects have a working demo",
     c.wins ? c.wins + " prize" + (c.wins > 1 ? "s" : "") + " in " + c.hacks + " hackathons" : "No prizes yet in " + c.hacks + " hackathons",

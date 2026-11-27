@@ -1,6 +1,6 @@
 """Field notes per builder: school, program, graduating, year of study, city, last active.
 
-Rules (BUILD.md "Search criteria" and "Data pipeline" step 5):
+Rules:
 - Every fact has the UI's Fact shape {"value", "source", "looked"} (lib/types.ts). A missing
   value is None, and `looked` names only the places we actually checked. Résumés are not public
   on Devpost, so "résumé" is never claimed as looked.

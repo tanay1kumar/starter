@@ -12,8 +12,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Reference copy of the design, generated outputs, and the Python pipeline.
-    "design/**",
+    // Generated outputs and the Python pipeline.
     "test-results/**",
     "playwright-report/**",
     "pipeline/**",
